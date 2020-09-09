@@ -1,0 +1,22 @@
+{
+  "name": "red-contrib-ui-mp4frag",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevinGodell/node-red-contrib-ui-mp4frag.git"
+  },
+  "author": "Kevin Godell <kevin.godell@gmail.com> (https://github.com/kevinGodell)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kevinGodell/node-red-contrib-ui-mp4frag/issues"
+  },
+  "homepage": "https://github.com/kevinGodell/node-red-contrib-ui-mp4frag#readme",
+  "dependencies": {
+    "hls.js": "^0.14.11"
+  }
+}

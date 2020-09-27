@@ -1,15 +1,27 @@
 {
-  "name": "red-contrib-ui-mp4frag",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "node-red-contrib-ui-mp4frag",
+  "version": "0.1.0",
+  "description": "node-red fragmented mp4 client",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "npm pack",
+    "pretty": "prettier --write *.html",
+    "lint": "eslint --fix --ext .js --ignore-path .gitignore ."
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kevinGodell/node-red-contrib-ui-mp4frag.git"
   },
+  "keywords": [
+    "node-red",
+    "buffer",
+    "mp4",
+    "fragmented",
+    "fmp4",
+    "parser",
+    "ffmpeg",
+    "video"
+  ],
   "author": "Kevin Godell <kevin.godell@gmail.com> (https://github.com/kevinGodell)",
   "license": "MIT",
   "bugs": {
@@ -17,6 +29,23 @@
   },
   "homepage": "https://github.com/kevinGodell/node-red-contrib-ui-mp4frag#readme",
   "dependencies": {
-    "hls.js": "^0.14.11"
+    "node-red-dashboard": "^2.23.4"
+  },
+  "files": [
+    "ui_mp4frag.js",
+    "ui_mp4frag.html",
+    "lib/initController.js",
+    "locales/en-US/ui_mp4frag.json"
+  ],
+  "node-red": {
+    "nodes": {
+      "ui_mp4frag": "ui_mp4frag.js"
+    }
+  },
+  "devDependencies": {
+    "eslint": "^7.7.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.0.5"
   }
 }

@@ -37,7 +37,7 @@ module.exports = RED => {
 
         this.status({ fill: 'green', shape: 'ring', text: 'ready' });
       } else {
-        this.error(_('ui_mp4frag.error.no-group'));
+        this.error(_('ui_mp4frag.error.no_group'));
 
         this.status({ fill: 'red', shape: 'dot', text: 'ui_mp4frag.error.no-group' });
       }

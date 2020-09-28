@@ -72,9 +72,13 @@
         .prop('readonly', true)
         .on('click', () => {
           RED.notify(
-            `Add property <strong>uiMp4fragHlsJs</strong> to <em>settings.js</em><hr/><code class="form-tip form-tips">uiMp4fragHlsJs: 'url-to-lib-hls.js'</code>`,
-            'error'
+            this._('ui_mp4frag.warning.hls_js_url'),
+            { type: 'warning', id:'ui_mp4frag' }
           );
+          // use id to re-use existing notification
+          // type can be error = red, warning = orange, success = green, '' = blue
+          // for string replacement, use __somename__ in json ui_mp4frag.info.somenamestring
+          // call notify this._('ui_mp4frag.info.somenamestring', {somename:'thename'})
         });
 
       $('#node-input-autoplay').typedInput({ types: ['bool'] });

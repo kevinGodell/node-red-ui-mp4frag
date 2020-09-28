@@ -1,7 +1,16 @@
 {
   "ui_mp4frag": {
+    "label": {
+    },
+    "info": {
+    },
+    "success": {
+    },
+    "warning": {
+      "hls_js_url": "Add property <strong>uiMp4fragHlsJs</strong> to <em>settings.js</em><hr/><code class=\"form-tip form-tips\">uiMp4fragHlsJs: 'url_to_lib_hls.js'</code>"
+    },
     "error": {
-      "no-group": "group not set"
+      "no_group": "group not set"
     }
   }
 }

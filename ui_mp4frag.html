@@ -1,5 +1,13 @@
 <script type="text/javascript">
-  // add helper functions here
+
+  const HLS_JS_CONFIG = {
+    liveDurationInfinity: true,
+    liveBackBufferLength: 0,
+    maxBufferLength: 5, // default 30
+    manifestLoadingTimeOut: 1000,
+    manifestLoadingMaxRetry: 10,
+    manifestLoadingRetryDelay: 500,
+  };
 
   /*
     register node
@@ -32,15 +40,7 @@
         value: 'https://raw.githubusercontent.com/kevinGodell/node-red-contrib-ui-mp4frag/master/video_playback_error.png',
       },
       hlsJsConfig: {
-        value: JSON.stringify({
-          debug: false,
-          liveDurationInfinity: true,
-          liveBackBufferLength: 0,
-          maxBufferLength: 5, // default 30
-          manifestLoadingTimeOut: 1000,
-          manifestLoadingMaxRetry: 10,
-          manifestLoadingRetryDelay: 500,
-        }),
+        value: JSON.stringify(HLS_JS_CONFIG),
         validate: RED.validators.typedInput('json'),
       },
       restart: {
@@ -69,6 +69,7 @@
 
       $('#uiMp4fragHlsJs')
         .val(RED.settings.uiMp4fragHlsJs)
+        .prop('readonly', true)
         .on('click', () => {
           RED.notify(
             `Add property <strong>uiMp4fragHlsJs</strong> to <em>settings.js</em><hr/><code class="form-tip form-tips">uiMp4fragHlsJs: 'url-to-lib-hls.js'</code>`,
@@ -133,7 +134,7 @@
 
     <div class="form-row">
       <label for="uiMp4fragHlsJs"><i class="fa fa-book"></i> URL</label>
-      <input type="text" id="uiMp4fragHlsJs" readonly />
+      <input type="text" id="uiMp4fragHlsJs" />
     </div>
 
     <div class="form-row">

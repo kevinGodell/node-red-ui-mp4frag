@@ -35,11 +35,11 @@ module.exports = RED => {
 
         this.on('close', this._onClose); // listen to the close event
 
-        this.status({ fill: 'green', shape: 'ring', text: 'ready' });
+        this.status({ fill: 'green', shape: 'ring', text: _('ui_mp4frag.info.ready') });
       } else {
         this.error(_('ui_mp4frag.error.no_group'));
 
-        this.status({ fill: 'red', shape: 'dot', text: 'ui_mp4frag.error.no-group' });
+        this.status({ fill: 'red', shape: 'dot', text: _('ui_mp4frag.error.no-group') });
       }
     }
 
@@ -130,9 +130,9 @@ module.exports = RED => {
       UiMp4FragNode.removeFromBody(node);
 
       if (removed) {
-        node.status({ fill: 'red', shape: 'ring', text: 'removed' });
+        node.status({ fill: 'red', shape: 'ring', text: _('ui_mp4frag.info.removed') });
       } else {
-        node.status({ fill: 'red', shape: 'dot', text: 'closed' });
+        node.status({ fill: 'red', shape: 'dot', text: _('ui_mp4frag.info.closed') });
       }
 
       if (typeof done === 'function') {

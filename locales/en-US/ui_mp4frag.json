@@ -3,6 +3,9 @@
     "label": {
     },
     "info": {
+      "ready": "ready",
+      "removed": "removed",
+      "closed": "closed"
     },
     "success": {
     },

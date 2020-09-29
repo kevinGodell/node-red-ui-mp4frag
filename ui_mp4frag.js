@@ -160,7 +160,7 @@ module.exports = RED => {
         const type = typeof value;
         return [value, type];
       } catch (e) {
-        console.warn(e);
+        this.warn(e);
         return [undefined, 'undefined'];
       }
     }
@@ -178,7 +178,7 @@ module.exports = RED => {
 
   const UiMp4FragExtra = {
     settings: {
-      uiMp4fragHlsJs: { value: uiMp4fragHlsJs, exportable: true },
+      uiMp4fragHlsJsUrl: { value: uiMp4fragHlsJsUrl, exportable: true },
     },
   };
 

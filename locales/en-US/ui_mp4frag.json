@@ -1,16 +1,14 @@
 {
   "ui_mp4frag": {
-    "label": {
-    },
+    "label": {},
     "info": {
       "ready": "ready",
       "removed": "removed",
       "closed": "closed"
     },
-    "success": {
-    },
+    "success": {},
     "warning": {
-      "hls_js_url": "Add property <strong>uiMp4fragHlsJs</strong> to <em>settings.js</em><hr/><code class=\"form-tip form-tips\">uiMp4fragHlsJs: 'url_to_lib_hls.js'</code>"
+      "hls_js_url": "Add property <strong>uiMp4fragHlsJsUrl</strong> to <em>settings.js</em><hr/><code class=\"form-tip form-tips\">uiMp4fragHlsJsUrl: 'url_to_lib_hls.js'</code>"
     },
     "error": {
       "no_group": "group not set"

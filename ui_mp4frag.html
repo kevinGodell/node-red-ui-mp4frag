@@ -1,9 +1,8 @@
 <script type="text/javascript">
-
   const HLS_JS_CONFIG = {
     liveDurationInfinity: true,
     liveBackBufferLength: 0,
-    maxBufferLength: 5, // default 30
+    maxBufferLength: 5,
     manifestLoadingTimeOut: 1000,
     manifestLoadingMaxRetry: 10,
     manifestLoadingRetryDelay: 500,
@@ -67,18 +66,12 @@
         group: '#node-input-group',
       });
 
-      $('#uiMp4fragHlsJs')
-        .val(RED.settings.uiMp4fragHlsJs)
+      $('#uiMp4fragHlsJsUrl')
+        .val(RED.settings.uiMp4fragHlsJsUrl)
         .prop('readonly', true)
         .on('click', () => {
-          RED.notify(
-            this._('ui_mp4frag.warning.hls_js_url'),
-            { type: 'warning', id:'ui_mp4frag' }
-          );
-          // use id to re-use existing notification
-          // type can be error = red, warning = orange, success = green, '' = blue
-          // for string replacement, use __somename__ in json ui_mp4frag.info.somenamestring
-          // call notify this._('ui_mp4frag.info.somenamestring', {somename:'thename'})
+          // type can be error(red), warning(orange), success(green), ''(blue)
+          RED.notify(this._('ui_mp4frag.warning.hls_js_url'), { type: 'warning', id: 'ui_mp4frag' });
         });
 
       $('#node-input-autoplay').typedInput({ types: ['bool'] });
@@ -137,8 +130,8 @@
     <legend>HLS.js Options</legend>
 
     <div class="form-row">
-      <label for="uiMp4fragHlsJs"><i class="fa fa-book"></i> URL</label>
-      <input type="text" id="uiMp4fragHlsJs" />
+      <label for="uiMp4fragHlsJsUrl"><i class="fa fa-book"></i> URL</label>
+      <input type="text" id="uiMp4fragHlsJsUrl" />
     </div>
 
     <div class="form-row">

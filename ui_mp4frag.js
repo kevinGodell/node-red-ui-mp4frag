@@ -7,7 +7,7 @@ module.exports = RED => {
 
   const { addWidget } = RED.require('node-red-dashboard')(RED);
 
-  const { uiMp4fragHlsJs = 'https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js' } = RED.settings;
+  const { uiMp4fragHlsJsUrl = 'https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js' } = RED.settings;
 
   const NODE_TYPE = 'ui_mp4frag';
 

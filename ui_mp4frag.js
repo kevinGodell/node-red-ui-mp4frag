@@ -13,25 +13,25 @@ module.exports = RED => {
 
   const initController = require('./lib/initController.js');
 
-  class UiMp4FragNode {
+  class UiMp4fragNode {
     constructor(config) {
       createNode(this, config);
 
       // verify ui group exists
-      if (UiMp4FragNode.uiGroupExists(config) === true) {
+      if (UiMp4fragNode.uiGroupExists(config) === true) {
         config.videoID = `video_${NODE_TYPE}_${this.id}`; // set id for video element
 
-        UiMp4FragNode.sanitizeHlsJsConfig(config); // prevent json from crashing
+        UiMp4fragNode.sanitizeHlsJsConfig(config); // prevent json from crashing
 
-        UiMp4FragNode.addToHead(); // adds the script to the head (only once)
+        UiMp4fragNode.addToHead(); // adds the script to the head (only once)
 
-        UiMp4FragNode.addToBody(this, config); // adds the html markup to the body
+        UiMp4fragNode.addToBody(this, config); // adds the html markup to the body
 
-        // this._onInput = msg => void UiMp4FragNode.onInput(this, msg); // bind `this` using fat arrow, void to indicate no return val
+        // this._onInput = msg => void UiMp4fragNode.onInput(this, msg); // bind `this` using fat arrow, void to indicate no return val
 
         // this.on('input', this._onInput); // listen to the input event
 
-        this._onClose = (removed, done) => void UiMp4FragNode.onClose(this, removed, done);
+        this._onClose = (removed, done) => void UiMp4fragNode.onClose(this, removed, done);
 
         this.on('close', this._onClose); // listen to the close event
 
@@ -50,16 +50,16 @@ module.exports = RED => {
     }
 
     static addToHead() {
-      ++UiMp4FragNode.nodeCount;
+      ++UiMp4fragNode.nodeCount;
 
-      if (UiMp4FragNode.nodeCount === 1 && UiMp4FragNode.headDone === undefined) {
-        UiMp4FragNode.headDone = addWidget({
+      if (UiMp4fragNode.nodeCount === 1 && UiMp4fragNode.headDone === undefined) {
+        UiMp4fragNode.headDone = addWidget({
           node: '',
           group: '',
           order: 0,
           width: 0,
           height: 0,
-          format: UiMp4FragNode.renderInHead(),
+          format: UiMp4fragNode.renderInHead(),
           templateScope: 'global', // global causes `format` to be inserted in <head>
           emitOnlyNewValues: false,
           forwardInputMessages: false,
@@ -69,12 +69,12 @@ module.exports = RED => {
     }
 
     static removeFromHead() {
-      --UiMp4FragNode.nodeCount;
+      --UiMp4fragNode.nodeCount;
 
-      if (UiMp4FragNode.nodeCount === 0 && typeof UiMp4FragNode.headDone === 'function') {
-        UiMp4FragNode.headDone();
+      if (UiMp4fragNode.nodeCount === 0 && typeof UiMp4fragNode.headDone === 'function') {
+        UiMp4fragNode.headDone();
 
-        UiMp4FragNode.headDone = undefined;
+        UiMp4fragNode.headDone = undefined;
       }
     }
 
@@ -85,7 +85,7 @@ module.exports = RED => {
         order: config.order || 0,
         width: config.width,
         height: config.height,
-        format: UiMp4FragNode.renderInBody(config),
+        format: UiMp4fragNode.renderInBody(config),
         templateScope: 'local', // local causes `format` to be inserted in <body>
         emitOnlyNewValues: false,
         forwardInputMessages: false, // true = we do not need to listen to on input event and manually forward msg
@@ -129,9 +129,9 @@ module.exports = RED => {
 
       node._onClose = undefined;
 
-      UiMp4FragNode.removeFromHead();
+      UiMp4fragNode.removeFromHead();
 
-      UiMp4FragNode.removeFromBody(node);
+      UiMp4fragNode.removeFromBody(node);
 
       if (removed) {
         node.status({ fill: 'red', shape: 'ring', text: _('ui_mp4frag.info.removed') });
@@ -172,29 +172,29 @@ module.exports = RED => {
     static sanitizeHlsJsConfig(config) {
       const { hlsJsConfig } = config;
 
-      const [value, type] = UiMp4FragNode.jsonParse(hlsJsConfig);
+      const [value, type] = UiMp4fragNode.jsonParse(hlsJsConfig);
 
       config.hlsJsConfig = type === 'object' && value !== null ? value : {};
     }
 
     /*
     static get nodeCount() {
-      return typeof UiMp4FragNode._nodeCount === 'number' ? UiMp4FragNode._nodeCount : 0;
+      return typeof UiMp4fragNode._nodeCount === 'number' ? UiMp4fragNode._nodeCount : 0;
     }
 
     static set nodeCount(num) {
-      UiMp4FragNode._nodeCount = num;
+      UiMp4fragNode._nodeCount = num;
     }
     */
   }
 
-  UiMp4FragNode.nodeCount = 0; // increment in (successful) constructor, decrement on close event
+  UiMp4fragNode.nodeCount = 0; // increment in (successful) constructor, decrement on close event
 
-  const UiMp4FragMeta = {
+  const UiMp4fragMeta = {
     settings: {
       uiMp4fragHlsJsUrl: { value: uiMp4fragHlsJsUrl, exportable: true },
     },
   };
 
-  registerType(NODE_TYPE, UiMp4FragNode, UiMp4FragMeta);
+  registerType(NODE_TYPE, UiMp4fragNode, UiMp4fragMeta);
 };

@@ -17,11 +17,11 @@ module.exports = RED => {
     constructor(config) {
       createNode(this, config);
 
-      // return early if ui_group does not exist
+      // verify ui group exists
       if (UiMp4FragNode.uiGroupExists(config) === true) {
-        config.videoID = `video_${NODE_TYPE}_${this.id}`;
+        config.videoID = `video_${NODE_TYPE}_${this.id}`; // set id for video element
 
-        UiMp4FragNode.sanitizeHlsJsConfig(config);
+        UiMp4FragNode.sanitizeHlsJsConfig(config); // prevent json from crashing
 
         UiMp4FragNode.addToHead(); // adds the script to the head (only once)
 
@@ -50,7 +50,9 @@ module.exports = RED => {
     }
 
     static addToHead() {
-      if (UiMp4FragNode.headDone === undefined && UiMp4FragNode.nodeCount++ === 0) {
+      ++UiMp4FragNode.nodeCount;
+
+      if (UiMp4FragNode.nodeCount === 1 && UiMp4FragNode.headDone === undefined) {
         UiMp4FragNode.headDone = addWidget({
           node: '',
           group: '',
@@ -67,7 +69,9 @@ module.exports = RED => {
     }
 
     static removeFromHead() {
-      if (typeof UiMp4FragNode.headDone === 'function' && --UiMp4FragNode.nodeCount === 0) {
+      --UiMp4FragNode.nodeCount;
+
+      if (UiMp4FragNode.nodeCount === 0 && typeof UiMp4FragNode.headDone === 'function') {
         UiMp4FragNode.headDone();
 
         UiMp4FragNode.headDone = undefined;
@@ -141,16 +145,16 @@ module.exports = RED => {
     }
 
     static renderInHead() {
-      return String.raw`<script id="${NODE_TYPE}_hls_js" type="text/javascript" src="${uiMp4fragHlsJs}"></script>`;
+      return String.raw`<script id="${NODE_TYPE}_hls_js" type="text/javascript" src="${uiMp4fragHlsJsUrl}"></script>`;
       // return String.raw`<script>const ${NODE_TYPE}_script = document.createElement('script');${NODE_TYPE}_script.type = 'text/javascript';${NODE_TYPE}_script.src = '${uiMp4fragHlsJs}';${NODE_TYPE}_script.async = false;${NODE_TYPE}_script.defer = false;const ${NODE_TYPE}_head = document.getElementsByTagName('head')[0];${NODE_TYPE}_head.appendChild(${NODE_TYPE}_script);</script>`;
     }
 
     static renderInBody(config) {
       const style = 'padding:0;margin:0;width:100%;height:100%;overflow:hidden;border:1px solid grey;';
-      const videoOptions = 'muted playsinline';
+      const options = 'muted playsinline';
       return String.raw`<div style="${style}" ng-init='init(${JSON.stringify(config)})'>
-  <video id="${config.videoID}" style="width:100%;height:100%;" ${videoOptions} poster="${config.readyPoster}"></video>
-</div>`;
+        <video id="${config.videoID}" style="width:100%;height:100%;" ${options} poster="${config.readyPoster}"></video>
+      </div>`;
     }
 
     // return object if good, undefined if bad
@@ -172,15 +176,25 @@ module.exports = RED => {
 
       config.hlsJsConfig = type === 'object' && value !== null ? value : {};
     }
+
+    /*
+    static get nodeCount() {
+      return typeof UiMp4FragNode._nodeCount === 'number' ? UiMp4FragNode._nodeCount : 0;
+    }
+
+    static set nodeCount(num) {
+      UiMp4FragNode._nodeCount = num;
+    }
+    */
   }
 
   UiMp4FragNode.nodeCount = 0; // increment in (successful) constructor, decrement on close event
 
-  const UiMp4FragExtra = {
+  const UiMp4FragMeta = {
     settings: {
       uiMp4fragHlsJsUrl: { value: uiMp4fragHlsJsUrl, exportable: true },
     },
   };
 
-  registerType(NODE_TYPE, UiMp4FragNode, UiMp4FragExtra);
+  registerType(NODE_TYPE, UiMp4FragNode, UiMp4FragMeta);
 };

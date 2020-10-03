@@ -17,49 +17,72 @@ module.exports = RED => {
     constructor(config) {
       createNode(this, config);
 
-      // verify ui group exists
-      if (UiMp4fragNode.uiGroupExists(config) === true) {
-        config.videoID = `video_${NODE_TYPE}_${this.id}`; // set id for video element
+      this.group = config.group;
 
-        UiMp4fragNode.sanitizeHlsJsConfig(config); // prevent json from crashing
+      this.order = config.order || 0;
+
+      this.width = config.width;
+
+      this.height = config.height;
+
+      this.hlsJsConfig = config.hlsJsConfig;
+
+      this.errorPoster = config.errorPoster;
+
+      this.readyPoster = config.readyPoster;
+
+      this.autoplay = config.autoplay;
+
+      this.restart = config.restart;
+
+      this.videoID = `video_${NODE_TYPE}_${this.id}`;
+
+      this.videoOptions = 'muted playsinline'; // todo: user configurable
+
+      this.videoStyle = 'width:100%;height:100%;'; // todo: user configurable
+
+      this.divStyle = 'padding:0;margin:0;width:100%;height:100%;overflow:hidden;border:1px solid grey;'; // todo: user configurable
+
+      try {
+        this.uiGroupNodeExists(); // throws
+
+        this.sanitizeHlsJsConfig(); // throws
 
         UiMp4fragNode.addToHead(); // adds the script to the head (only once)
 
-        UiMp4fragNode.addToBody(this, config); // adds the html markup to the body
+        this.addToBody(); // adds the html markup to the body
 
-        // this._onInput = msg => void UiMp4fragNode.onInput(this, msg); // bind `this` using fat arrow, void to indicate no return val
-
-        // this.on('input', this._onInput); // listen to the input event
-
-        this._onClose = (removed, done) => void UiMp4fragNode.onClose(this, removed, done);
-
-        this.on('close', this._onClose); // listen to the close event
+        this.on('close', this.onClose); // listen to the close event
 
         this.status({ fill: 'green', shape: 'ring', text: _('ui_mp4frag.info.ready') });
-      } else {
-        this.error(_('ui_mp4frag.error.no_group'));
+      } catch (err) {
+        this.error(err);
 
-        this.status({ fill: 'red', shape: 'dot', text: _('ui_mp4frag.error.no-group') });
+        this.status({ fill: 'red', shape: 'dot', text: err.toString() });
       }
     }
 
-    static uiGroupExists(config) {
-      const group = getNode(config && config.group);
+    uiGroupNodeExists() {
+      const node = getNode(this.group);
 
-      return !!(group && group.type === 'ui_group');
+      const type = node && node.type;
+
+      if (type !== 'ui_group') {
+        throw new Error(_('ui_mp4frag.error.invalid_ui_group'));
+      }
     }
 
     static addToHead() {
-      ++UiMp4fragNode.nodeCount;
+      ++this.nodeCount;
 
-      if (UiMp4fragNode.nodeCount === 1 && UiMp4fragNode.headDone === undefined) {
-        UiMp4fragNode.headDone = addWidget({
+      if (this.nodeCount === 1 && this.headDone === undefined) {
+        this.headDone = addWidget({
           node: '',
           group: '',
           order: 0,
           width: 0,
           height: 0,
-          format: UiMp4fragNode.renderInHead(),
+          format: this.renderInHead(),
           templateScope: 'global', // global causes `format` to be inserted in <head>
           emitOnlyNewValues: false,
           forwardInputMessages: false,
@@ -69,23 +92,23 @@ module.exports = RED => {
     }
 
     static removeFromHead() {
-      --UiMp4fragNode.nodeCount;
+      --this.nodeCount;
 
-      if (UiMp4fragNode.nodeCount === 0 && typeof UiMp4fragNode.headDone === 'function') {
-        UiMp4fragNode.headDone();
+      if (this.nodeCount === 0 && typeof this.headDone === 'function') {
+        this.headDone();
 
-        UiMp4fragNode.headDone = undefined;
+        this.headDone = undefined;
       }
     }
 
-    static addToBody(node, config) {
-      node._bodyDone = addWidget({
-        node: node,
-        group: config.group,
-        order: config.order || 0,
-        width: config.width,
-        height: config.height,
-        format: UiMp4fragNode.renderInBody(config),
+    addToBody() {
+      this.bodyDone = addWidget({
+        node: this,
+        group: this.group,
+        order: this.order,
+        width: this.width,
+        height: this.height,
+        format: this.renderInBody(),
         templateScope: 'local', // local causes `format` to be inserted in <body>
         emitOnlyNewValues: false,
         forwardInputMessages: false, // true = we do not need to listen to on input event and manually forward msg
@@ -108,40 +131,28 @@ module.exports = RED => {
       });
     }
 
-    static removeFromBody(node) {
-      if (typeof node._bodyDone === 'function') {
-        node._bodyDone();
+    removeFromBody() {
+      if (typeof this.bodyDone === 'function') {
+        this.bodyDone();
 
-        node._bodyDone = undefined;
+        this.bodyDone = undefined;
       }
     }
 
-    /* static onInput(node, msg) {
-      node.send(msg);
-    }*/
-
-    static onClose(node, removed, done) {
-      // node.removeListener('input', node._onInput);
-
-      // node._onInput = undefined;
-
-      node.removeListener('close', node._onClose);
-
-      node._onClose = undefined;
+    onClose(removed, done) {
+      this.removeListener('close', this.onClose);
 
       UiMp4fragNode.removeFromHead();
 
-      UiMp4fragNode.removeFromBody(node);
+      this.removeFromBody();
 
       if (removed) {
-        node.status({ fill: 'red', shape: 'ring', text: _('ui_mp4frag.info.removed') });
+        this.status({ fill: 'red', shape: 'ring', text: _('ui_mp4frag.info.removed') });
       } else {
-        node.status({ fill: 'red', shape: 'dot', text: _('ui_mp4frag.info.closed') });
+        this.status({ fill: 'red', shape: 'dot', text: _('ui_mp4frag.info.closed') });
       }
 
-      if (typeof done === 'function') {
-        done();
-      }
+      done();
     }
 
     static renderInHead() {
@@ -149,43 +160,42 @@ module.exports = RED => {
       // return String.raw`<script>const ${NODE_TYPE}_script = document.createElement('script');${NODE_TYPE}_script.type = 'text/javascript';${NODE_TYPE}_script.src = '${uiMp4fragHlsJs}';${NODE_TYPE}_script.async = false;${NODE_TYPE}_script.defer = false;const ${NODE_TYPE}_head = document.getElementsByTagName('head')[0];${NODE_TYPE}_head.appendChild(${NODE_TYPE}_script);</script>`;
     }
 
-    static renderInBody(config) {
-      const style = 'padding:0;margin:0;width:100%;height:100%;overflow:hidden;border:1px solid grey;';
-      const options = 'muted playsinline';
-      return String.raw`<div style="${style}" ng-init='init(${JSON.stringify(config)})'>
-        <video id="${config.videoID}" style="width:100%;height:100%;" ${options} poster="${config.readyPoster}"></video>
+    renderInBody() {
+      const initObj = {
+        readyPoster: this.readyPoster,
+        errorPoster: this.errorPoster,
+        autoplay: this.autoplay,
+        restart: this.restart,
+        hlsJsConfig: this.hlsJsConfig,
+        videoID: this.videoID,
+      };
+
+      const initObjStr = JSON.stringify(initObj);
+
+      return String.raw`<div style="${this.divStyle}" ng-init='init(${initObjStr})'>
+        <video id="${this.videoID}" style="${this.videoStyle}" poster="${this.readyPoster}" ${this.videoOptions}></video>
       </div>`;
     }
 
-    // return object if good, undefined if bad
     static jsonParse(str) {
       try {
         const value = JSON.parse(str);
         const type = typeof value;
         return [value, type];
-      } catch (e) {
-        this.warn(e);
+      } catch (err) {
         return [undefined, 'undefined'];
       }
     }
 
-    static sanitizeHlsJsConfig(config) {
-      const { hlsJsConfig } = config;
+    sanitizeHlsJsConfig() {
+      const [value, type] = UiMp4fragNode.jsonParse(this.hlsJsConfig);
 
-      const [value, type] = UiMp4fragNode.jsonParse(hlsJsConfig);
-
-      config.hlsJsConfig = type === 'object' && value !== null ? value : {};
+      if (type === 'object' && value !== null) {
+        this.hlsJsConfig = value;
+      } else {
+        throw new Error(_('ui_mp4frag.error.invalid_hls_js_config'));
+      }
     }
-
-    /*
-    static get nodeCount() {
-      return typeof UiMp4fragNode._nodeCount === 'number' ? UiMp4fragNode._nodeCount : 0;
-    }
-
-    static set nodeCount(num) {
-      UiMp4fragNode._nodeCount = num;
-    }
-    */
   }
 
   UiMp4fragNode.nodeCount = 0; // increment in (successful) constructor, decrement on close event

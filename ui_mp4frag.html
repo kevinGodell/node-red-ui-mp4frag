@@ -8,9 +8,7 @@
     manifestLoadingRetryDelay: 500,
   };
 
-  /*
-    register node
-   */
+  // register node
   RED.nodes.registerType('ui_mp4frag', {
     align: 'left',
     category: 'cctv',
@@ -70,8 +68,8 @@
         .val(RED.settings.uiMp4fragHlsJsUrl)
         .prop('readonly', true)
         .on('click', () => {
-          // type can be error(red), warning(orange), success(green), ''(blue)
           RED.notify(this._('ui_mp4frag.warning.hls_js_url'), { type: 'warning', id: 'ui_mp4frag' });
+          // type/color: error = red, warning = orange, success = green, '' = blue
         });
 
       $('#node-input-autoplay').typedInput({ types: ['bool'] });

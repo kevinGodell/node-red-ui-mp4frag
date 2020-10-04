@@ -35,7 +35,8 @@
     "ui_mp4frag.js",
     "ui_mp4frag.html",
     "lib/initController.js",
-    "locales/en-US/ui_mp4frag.json"
+    "locales/en-US/ui_mp4frag.json",
+    "flows/flows.json"
   ],
   "node-red": {
     "nodes": {

@@ -147,5 +147,23 @@
 </script>
 
 <script data-help-name="ui_mp4frag" type="text/html">
-  <p>Play a fragmented mp4.</p>
+  <h2>Play HLS video using HLS.js or native HLS on supported browsers.</h2>
+  <p>After receiving a msg with the payload set as an HLS Playlist, it will trigger the ui video player to load.</p>
+  <p><code class="form-tips">{ payload: '/mp4frag/example/hls.m3u8' }</code></p>
+  <p>
+    The video player first tries to use HLS.js to play the video on supported browsers. If HLS.js is not supported, the video player will
+    fall back to trying native HLS. If neither is supported by the browser, an error message will be shown.
+  </p>
+  <h3>Video Autoplay (option not implemented)</h3>
+  <p>Start playing the video after the source is loaded.</p>
+  <h3>Video Restart (option not implemented)</h3>
+  <p>If fatal errors occur, reload video source.</p>
+  <h3>HLS.js URL</h3>
+  <p>Path to the HLS.js library. Must be set in the settings.js file.</p>
+  <p><code class="form-tips">uiMp4fragHlsJsUrl: 'url_to_lib_hls.js'</code></p>
+  <h3>HLS.js Config</h3>
+  <p>
+    Configuration object passed to a new Hls instance. For a list of available options, please see the
+    <a target="_blank" href="https://github.com/video-dev/hls.js/blob/master/docs/API.md#fine-tuning">hls.js docs</a>.
+  </p>
 </script>

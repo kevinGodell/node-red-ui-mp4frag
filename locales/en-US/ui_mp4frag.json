@@ -8,7 +8,7 @@
     },
     "success": {},
     "warning": {
-      "hls_js_url": "Add property <strong>uiMp4fragHlsJsUrl</strong> to <em>settings.js</em><hr/><code class=\"form-tip form-tips\">uiMp4fragHlsJsUrl: 'url_to_lib_hls.js'</code>"
+      "hls_js_url": "Add property <strong>uiMp4fragHlsJsUrl</strong> to <em>settings.js</em><hr/><code class=\"form-tips\">uiMp4fragHlsJsUrl: 'url_to_lib_hls.js'</code>"
     },
     "error": {
       "invalid_ui_group": "invalid ui group",

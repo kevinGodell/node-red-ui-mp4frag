@@ -113,6 +113,7 @@ module.exports = RED => {
         emitOnlyNewValues: false,
         forwardInputMessages: false, // true = we do not need to listen to on input event and manually forward msg
         storeFrontEndInputAsState: false,
+        persistantFrontEndValue: true,
         convertBack: value => {
           // console.log('convert back', {value});
           return value;

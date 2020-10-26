@@ -27,6 +27,8 @@ module.exports = RED => {
 
       this.hlsJsConfig = config.hlsJsConfig;
 
+      this.playerOrder = config.playerOrder;
+
       this.errorPoster = config.errorPoster;
 
       this.readyPoster = config.readyPoster;
@@ -47,6 +49,8 @@ module.exports = RED => {
         this.uiGroupNodeExists(); // throws
 
         this.sanitizeHlsJsConfig(); // throws
+
+        this.sanitizePlayerOrder(); // throws
 
         UiMp4fragNode.addToHead(); // adds the script to the head (only once)
 
@@ -169,6 +173,7 @@ module.exports = RED => {
         restart: this.restart,
         hlsJsConfig: this.hlsJsConfig,
         videoID: this.videoID,
+        playerOrder: this.playerOrder,
       };
 
       const initObjStr = JSON.stringify(initObj);
@@ -195,6 +200,16 @@ module.exports = RED => {
         this.hlsJsConfig = value;
       } else {
         throw new Error(_('ui_mp4frag.error.invalid_hls_js_config'));
+      }
+    }
+
+    sanitizePlayerOrder() {
+      const [value, type] = UiMp4fragNode.jsonParse(this.playerOrder);
+
+      if (type === 'object' && Array.isArray(value) === true && value.length > 0) {
+        this.playerOrder = value;
+      } else {
+        throw new Error(_('ui_mp4frag.error.invalid_player_order'));
       }
     }
   }

@@ -27,7 +27,9 @@ module.exports = RED => {
 
       this.hlsJsConfig = config.hlsJsConfig;
 
-      this.playerOrder = config.playerOrder;
+      // this.playerOrder = config.playerOrder;
+
+      this.players = config.players;
 
       this.errorPoster = config.errorPoster;
 
@@ -50,7 +52,9 @@ module.exports = RED => {
 
         this.sanitizeHlsJsConfig(); // throws
 
-        this.sanitizePlayerOrder(); // throws
+        // this.sanitizePlayerOrder(); // throws
+
+        this.sanitizePlayers(); // throws
 
         UiMp4fragNode.addToHead(); // adds the script to the head (only once)
 
@@ -173,13 +177,14 @@ module.exports = RED => {
         restart: this.restart,
         hlsJsConfig: this.hlsJsConfig,
         videoID: this.videoID,
-        playerOrder: this.playerOrder,
+        // playerOrder: this.playerOrder,
+        players: this.players,
       };
 
       const initObjStr = JSON.stringify(initObj);
 
       return String.raw`<div style="${this.divStyle}" ng-init='init(${initObjStr})'>
-        <video id="${this.videoID}" style="${this.videoStyle}" poster="${this.readyPoster}" ${this.videoOptions}></video>
+        <video id="${this.videoID}" style="${this.videoStyle}" poster="${this.readyPoster}" preload="none" ${this.videoOptions}></video>
       </div>`;
     }
 
@@ -203,7 +208,14 @@ module.exports = RED => {
       }
     }
 
-    sanitizePlayerOrder() {
+    sanitizePlayers() {
+      if (Array.isArray(this.players) === false || this.players.length === 0) {
+        // this.players = ['socket.io', 'hls.js', 'hls', 'mp4'];
+        throw new Error(_('ui_mp4frag.error.invalid_player_order'));
+      }
+    }
+
+    /* sanitizePlayerOrder() {
       const [value, type] = UiMp4fragNode.jsonParse(this.playerOrder);
 
       if (type === 'object' && Array.isArray(value) === true && value.length > 0) {
@@ -211,7 +223,7 @@ module.exports = RED => {
       } else {
         throw new Error(_('ui_mp4frag.error.invalid_player_order'));
       }
-    }
+    }*/
   }
 
   UiMp4fragNode.nodeCount = 0; // increment in (successful) constructor, decrement on close event

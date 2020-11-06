@@ -8,7 +8,7 @@
     manifestLoadingRetryDelay: 500,
   };
 
-  const PLAYER_ORDER = ['socket.io', 'hls.js', 'hls', 'mp4'];
+  const PLAYERS = ['socket.io', 'hls.js', 'hls', 'mp4'];
 
   // register node
   RED.nodes.registerType('ui_mp4frag', {
@@ -57,9 +57,11 @@
         value: true,
         validate: RED.validators.typedInput('bool'),
       },
-      playerOrder: {
-        value: JSON.stringify(PLAYER_ORDER),
-        validate: RED.validators.typedInput('json'),
+      players: {
+        value: PLAYERS,
+        validate: function (players) {
+          return Array.isArray(players) && players.length > 0;
+        },
       },
     },
     icon: 'font-awesome/fa-file-video-o',
@@ -91,7 +93,30 @@
 
       $('#node-input-hlsJsConfig').typedInput({ types: ['json'] });
 
-      $('#node-input-playerOrder').typedInput({ types: ['json'] });
+      const players = $('#node-input-players-container').editableList({
+        header: $('<div>').append($.parseHTML('<div style="margin-left: 40px; width: 150px; display: inline-grid">Order</div><div style="display: inline-grid">Player</div>')),
+        addItem: function (row, index, data) {
+          $(row).html(`<div style="margin-left: 18px; width: 150px; display: inline-grid">${index + 1}</div><div style="display: inline-grid">${data}</div>`);
+        },
+        sortItems: function (items) {
+          items.each((index, row) => {
+            row.html(`<div style="margin-left: 18px; width: 150px; display: inline-grid">${index + 1}</div><div style="display: inline-grid">${row.data('data')}</div>`);
+          });
+        },
+        addButton: false,
+        sortable: true,
+        // removable: true
+      });
+
+      if (Array.isArray(this.players) === true && this.players.length > 0) {
+        this.players.forEach(player => {
+          if (typeof player === 'string') {
+            players.editableList('addItem', player);
+          }
+        });
+      } else {
+        players.editableList('addItems', PLAYERS);
+      }
 
       $('<button type="button" class="red-ui-button red-ui-button-small"><i class="fa fa-book"></i> help</button>')
         .on('click', () => {
@@ -99,7 +124,13 @@
         })
         .appendTo($('div.red-ui-tray-footer'));
     },
-    oneditsave: function () {},
+    oneditsave: function () {
+      const items = $('#node-input-players-container').editableList('items');
+      this.players = [];
+      items.each((index, row) => {
+        this.players.push(row.data('data'));
+      });
+    },
   });
 </script>
 
@@ -143,6 +174,10 @@
       <label for="node-input-errorPoster"><i class="fa fa-picture-o"></i> Error</label>
       <input type="text" id="node-input-errorPoster" />
     </div>
+
+    <div class="form-row">
+      <ol id="node-input-players-container"></ol>
+    </div>
   </fieldset>
 
   <fieldset>
@@ -158,11 +193,6 @@
       <input type="text" id="node-input-hlsJsConfig" />
     </div>
   </fieldset>
-
-  <div class="form-row">
-    <label for="node-input-playerOrder"><i class="fa fa-cog"></i> Players</label>
-    <input type="text" id="node-input-playerOrder" />
-  </div>
 </script>
 
 <script data-help-name="ui_mp4frag" type="text/html">

@@ -93,14 +93,18 @@
 
       $('#node-input-hlsJsConfig').typedInput({ types: ['json'] });
 
+      const rowHtml = (index, data) => {
+        return `<div style="margin-left: 18px; width: 150px; display: inline-grid">${index + 1}</div><div style="display: inline-grid">${data}</div>`;
+      };
+
       const players = $('#node-input-players-container').editableList({
         header: $('<div>').append($.parseHTML('<div style="margin-left: 40px; width: 150px; display: inline-grid">Order</div><div style="display: inline-grid">Player</div>')),
         addItem: function (row, index, data) {
-          $(row).html(`<div style="margin-left: 18px; width: 150px; display: inline-grid">${index + 1}</div><div style="display: inline-grid">${data}</div>`);
+          $(row).html(rowHtml(index, data));
         },
         sortItems: function (items) {
           items.each((index, row) => {
-            row.html(`<div style="margin-left: 18px; width: 150px; display: inline-grid">${index + 1}</div><div style="display: inline-grid">${row.data('data')}</div>`);
+            row.html(rowHtml(index, row.data('data')));
           });
         },
         addButton: false,

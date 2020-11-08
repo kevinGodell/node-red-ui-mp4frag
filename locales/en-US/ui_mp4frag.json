@@ -4,7 +4,9 @@
     "info": {
       "ready": "ready",
       "removed": "removed",
-      "closed": "closed"
+      "closed": "closed",
+      "loaded": "loaded",
+      "unloaded": "unloaded"
     },
     "success": {},
     "warning": {

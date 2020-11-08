@@ -33,9 +33,11 @@ module.exports = RED => {
 
       this.readyPoster = config.readyPoster;
 
-      this.autoplay = config.autoplay;
+      this.play = config.play;
 
-      this.restart = config.restart;
+      this.unload = config.unload;
+
+      this.retry = config.retry;
 
       this.videoID = `video_${NODE_TYPE}_${this.id}`;
 
@@ -122,8 +124,13 @@ module.exports = RED => {
           // console.log('convert back', {value});
           return value;
         },
-        beforeEmit: (msg, value) => {
-          // console.log('before emit', {msg}, {value});
+        beforeEmit: (msg, payload) => {
+          // console.log('before emit');
+          if (!payload) {
+            this.status({ fill: 'green', shape: 'ring', text: _('ui_mp4frag.info.unloaded') });
+          } else {
+            this.status({ fill: 'green', shape: 'dot', text: _('ui_mp4frag.info.loaded') });
+          }
           return { msg };
         },
         beforeSend: (msg, orig) => {
@@ -169,8 +176,9 @@ module.exports = RED => {
       const initObj = {
         readyPoster: this.readyPoster,
         errorPoster: this.errorPoster,
-        autoplay: this.autoplay,
-        restart: this.restart,
+        play: this.play,
+        unload: this.unload,
+        retry: this.retry,
         hlsJsConfig: this.hlsJsConfig,
         videoID: this.videoID,
         players: this.players,

@@ -10,6 +10,16 @@
 
   const PLAYERS = ['socket.io', 'hls.js', 'hls', 'mp4'];
 
+  const valToBool = val => {
+    if (typeof val === 'string') {
+      return val === 'true';
+    }
+    if (typeof val === 'boolean') {
+      return val;
+    }
+    return false;
+  };
+
   // register node
   RED.nodes.registerType('ui_mp4frag', {
     align: 'left',
@@ -49,13 +59,26 @@
         value: JSON.stringify(HLS_JS_CONFIG),
         validate: RED.validators.typedInput('json'),
       },
-      restart: {
+      retry: {
         value: true,
-        validate: RED.validators.typedInput('bool'),
+        validate: function (retry) {
+          this.retry = valToBool(retry);
+          return true;
+        },
       },
-      autoplay: {
+      play: {
         value: true,
-        validate: RED.validators.typedInput('bool'),
+        validate: function (play) {
+          this.play = valToBool(play);
+          return true;
+        },
+      },
+      unload: {
+        value: true,
+        validate: function (unload) {
+          this.unload = valToBool(unload);
+          return true;
+        },
       },
       players: {
         value: PLAYERS,
@@ -87,9 +110,11 @@
           // type/color: error = red, warning = orange, success = green, '' = blue
         });
 
-      $('#node-input-autoplay').typedInput({ types: ['bool'] });
+      $('#node-input-play').typedInput({ types: ['bool'] });
 
-      $('#node-input-restart').typedInput({ types: ['bool'] });
+      $('#node-input-retry').typedInput({ types: ['bool'] });
+
+      $('#node-input-unload').typedInput({ types: ['bool'] });
 
       $('#node-input-hlsJsConfig').typedInput({ types: ['json'] });
 
@@ -130,6 +155,7 @@
     },
     oneditsave: function () {
       const items = $('#node-input-players-container').editableList('items');
+
       this.players = [];
       items.each((index, row) => {
         this.players.push(row.data('data'));
@@ -157,16 +183,29 @@
   </div>
 
   <fieldset>
+    <legend>Player Order</legend>
+
+    <div class="form-row">
+      <ol id="node-input-players-container"></ol>
+    </div>
+  </fieldset>
+
+  <fieldset>
     <legend>Video Options</legend>
 
     <div class="form-row">
-      <label for="node-input-autoplay"><i class="fa fa-play"></i> Autoplay</label>
-      <input type="text" id="node-input-autoplay" />
+      <label for="node-input-play"><i class="fa fa-play"></i> Play</label>
+      <input type="text" id="node-input-play" />
     </div>
 
     <div class="form-row">
-      <label for="node-input-restart"><i class="fa fa-repeat"></i> Restart</label>
-      <input type="text" id="node-input-restart" />
+      <label for="node-input-unload"><i class="fa fa-eye"></i> Unload</label>
+      <input type="text" id="node-input-unload" />
+    </div>
+
+    <div class="form-row">
+      <label for="node-input-retry"><i class="fa fa-repeat"></i> Retry</label>
+      <input type="text" id="node-input-retry" />
     </div>
 
     <div class="form-row">
@@ -177,10 +216,6 @@
     <div class="form-row">
       <label for="node-input-errorPoster"><i class="fa fa-picture-o"></i> Error</label>
       <input type="text" id="node-input-errorPoster" />
-    </div>
-
-    <div class="form-row">
-      <ol id="node-input-players-container"></ol>
     </div>
   </fieldset>
 
@@ -200,17 +235,39 @@
 </script>
 
 <script data-help-name="ui_mp4frag" type="text/html">
-  <h2>Play HLS video using HLS.js or native HLS on supported browsers.</h2>
-  <p>After receiving a msg with the payload set as an HLS Playlist, it will trigger the ui video player to load.</p>
-  <p><code class="form-tips">{ payload: '/mp4frag/example/hls.m3u8' }</code></p>
+  <h2>Play fragmented mp4 video on supported browsers.</h2>
+  <p>The ui video player loads after receiving a message with the payload set as an HLS Playlist, Socket.io Connection, or mp4 video path.</p>
+  <h3>Example message payloads</h3>
+  <pre class="form-tips"><code>{
+  // hls playlist
+  payload: '/mp4frag/example/hls.m3u8'
+}</code></pre>
+  <pre class="form-tips"><code>{
+  // mp4 video path
+  payload: '/mp4frag/example/video.mp4'
+}</code></pre>
+  <pre class="form-tips"><code>{
+  // multiple video sources
+  payload: {
+    hlsPlaylist: '/mp4frag/example/hls.m3u8',
+    socketIo: {
+      path: '/mp4frag/socket.io',
+      namespace: '/example',
+    },
+    mp4Video: '/mp4frag/example/video.mp4'
+  }
+}</code></pre>
+  <h3>Player Order</h3>
   <p>
-    The video player first tries to use HLS.js to play the video on supported browsers. If HLS.js is not supported, the video player will fall back to trying native HLS. If neither is supported by the
-    browser, an error message will be shown.
+    This will determine which video player library or type to use. It will check the payload for available video sources that are compatible with the current browser based on the selected order. If
+    receiving a payload with multiple video sources, it will use the first compatible type found.
   </p>
-  <h3>Video Autoplay (option not implemented)</h3>
-  <p>Start playing the video after the source is loaded.</p>
-  <h3>Video Restart (option not implemented)</h3>
-  <p>If fatal errors occur, reload video source.</p>
+  <h3>Video Play</h3>
+  <p>Play video after source is loaded.</p>
+  <h3>Video Unload</h3>
+  <p>Unload source if player is not visible.</p>
+  <h3>Video Retry (option not implemented)</h3>
+  <p>Retry loading source if fatal error occurs.</p>
   <h3>Video Ready</h3>
   <p>Image to show as video poster after initialized. It can be a url or base 64 encoded image.</p>
   <h3>Video Error</h3>

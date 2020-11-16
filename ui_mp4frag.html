@@ -10,14 +10,22 @@
 
   const PLAYERS = ['socket.io', 'hls.js', 'hls', 'mp4'];
 
-  const valToBool = val => {
-    if (typeof val === 'string') {
-      return val === 'true';
-    }
+  const valToBool = (val, def) => {
     if (typeof val === 'boolean') {
       return val;
     }
-    return false;
+    if (typeof val === 'string') {
+      return val === 'true';
+    }
+    return def;
+  };
+
+  const valToFloat = (val, def) => {
+    val = Math.round(Number.parseFloat(val) * 10) / 10;
+    if (Number.isNaN(val) === false) {
+      return val;
+    }
+    return def;
   };
 
   // register node
@@ -37,7 +45,7 @@
         value: 0,
       },
       width: {
-        value: 5,
+        value: 6,
         validate: function (width) {
           const group = $('#node-input-group').val() || this.group;
           const groupNode = RED.nodes.node(group);
@@ -62,22 +70,25 @@
       retry: {
         value: true,
         validate: function (retry) {
-          this.retry = valToBool(retry);
-          return true;
+          return typeof retry === 'boolean';
         },
       },
       play: {
         value: true,
         validate: function (play) {
-          this.play = valToBool(play);
-          return true;
+          return typeof play === 'boolean';
         },
       },
       unload: {
         value: true,
         validate: function (unload) {
-          this.unload = valToBool(unload);
-          return true;
+          return typeof unload === 'boolean';
+        },
+      },
+      threshold: {
+        value: 0.5,
+        validate: function (threshold) {
+          return typeof threshold === 'number' && threshold >= 0.1 && threshold <= 0.9;
         },
       },
       players: {
@@ -110,11 +121,29 @@
           // type/color: error = red, warning = orange, success = green, '' = blue
         });
 
-      $('#node-input-play').typedInput({ types: ['bool'] });
+      $('#node-input-play-container')
+        .typedInput({ types: ['bool'] })
+        .typedInput('value', this.play);
 
-      $('#node-input-retry').typedInput({ types: ['bool'] });
+      $('#node-input-retry-container')
+        .typedInput({ types: ['bool'] })
+        .typedInput('value', this.retry);
 
-      $('#node-input-unload').typedInput({ types: ['bool'] });
+      $('#node-input-unload-container')
+        .typedInput({ types: ['bool'] })
+        .typedInput('value', this.unload);
+
+      $('#node-input-threshold-container')
+        .typedInput({
+          types: [
+            {
+              value: 'num',
+              icon: 'fa fa-sort-numeric-asc',
+              options: ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9'],
+            },
+          ],
+        })
+        .typedInput('value', this.threshold);
 
       $('#node-input-hlsJsConfig').typedInput({ types: ['json'] });
 
@@ -137,15 +166,11 @@
         // removable: true
       });
 
-      if (Array.isArray(this.players) === true && this.players.length > 0) {
-        this.players.forEach(player => {
-          if (typeof player === 'string') {
-            players.editableList('addItem', player);
-          }
-        });
-      } else {
-        players.editableList('addItems', PLAYERS);
-      }
+      this.players.forEach(player => {
+        if (typeof player === 'string') {
+          players.editableList('addItem', player);
+        }
+      });
 
       $('<button type="button" class="red-ui-button red-ui-button-small"><i class="fa fa-book"></i> help</button>')
         .on('click', () => {
@@ -154,12 +179,21 @@
         .appendTo($('div.red-ui-tray-footer'));
     },
     oneditsave: function () {
-      const items = $('#node-input-players-container').editableList('items');
-
       this.players = [];
-      items.each((index, row) => {
-        this.players.push(row.data('data'));
-      });
+
+      $('#node-input-players-container')
+        .editableList('items')
+        .each((index, row) => {
+          this.players.push(row.data('data'));
+        });
+
+      this.play = valToBool($('#node-input-play-container').typedInput('value'), this._def.defaults.play.value);
+
+      this.retry = valToBool($('#node-input-retry-container').typedInput('value'), this._def.defaults.retry.value);
+
+      this.unload = valToBool($('#node-input-unload-container').typedInput('value'), this._def.defaults.unload.value);
+
+      this.threshold = valToFloat($('#node-input-threshold-container').typedInput('value'), this._def.defaults.threshold.value);
     },
   });
 </script>
@@ -194,18 +228,23 @@
     <legend>Video Options</legend>
 
     <div class="form-row">
-      <label for="node-input-play"><i class="fa fa-play"></i> Play</label>
-      <input type="text" id="node-input-play" />
+      <label for="node-input-play-container"><i class="fa fa-play"></i> Play</label>
+      <input type="text" id="node-input-play-container" />
     </div>
 
     <div class="form-row">
-      <label for="node-input-unload"><i class="fa fa-eye"></i> Unload</label>
-      <input type="text" id="node-input-unload" />
+      <label for="node-input-unload-container"><i class="fa fa-eye"></i> Unload</label>
+      <input type="text" id="node-input-unload-container" />
     </div>
 
     <div class="form-row">
-      <label for="node-input-retry"><i class="fa fa-repeat"></i> Retry</label>
-      <input type="text" id="node-input-retry" />
+      <label for="node-input-threshold-container"><i class="fa fa-percent"></i> Threshold</label>
+      <input type="text" id="node-input-threshold-container" />
+    </div>
+
+    <div class="form-row">
+      <label for="node-input-retry-container"><i class="fa fa-repeat"></i> Retry</label>
+      <input type="text" id="node-input-retry-container" />
     </div>
 
     <div class="form-row">

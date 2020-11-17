@@ -39,6 +39,8 @@ module.exports = RED => {
 
       this.retry = config.retry;
 
+      this.threshold = config.threshold;
+
       this.videoID = `video_${NODE_TYPE}_${this.id}`;
 
       this.videoOptions = 'muted playsinline'; // disablePictureInPicture'; // todo: user configurable
@@ -179,6 +181,7 @@ module.exports = RED => {
         play: this.play,
         unload: this.unload,
         retry: this.retry,
+        threshold: this.threshold,
         hlsJsConfig: this.hlsJsConfig,
         videoID: this.videoID,
         players: this.players,

@@ -43,7 +43,7 @@ module.exports = RED => {
 
       this.videoID = `video_${NODE_TYPE}_${this.id}`;
 
-      this.videoOptions = 'muted playsinline'; // disablePictureInPicture'; // todo: user configurable
+      this.videoOptions = 'preload="metadata" muted playsinline'; // disablePictureInPicture'; // todo: user configurable
 
       this.videoStyle = 'width:100%;height:100%;'; // todo: user configurable
 

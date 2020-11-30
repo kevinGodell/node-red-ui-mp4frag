@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/kevinGodell/node-red-contrib-ui-mp4frag#readme",
   "peerDependencies": {
-    "node-red-dashboard": "^2.24.1"
+    "node-red-dashboard": "^2.24.1 || github:kevinGodell/node-red-dashboard"
   },
   "files": [
     "ui_mp4frag.js",

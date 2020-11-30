@@ -28,7 +28,7 @@
     "url": "https://github.com/kevinGodell/node-red-contrib-ui-mp4frag/issues"
   },
   "homepage": "https://github.com/kevinGodell/node-red-contrib-ui-mp4frag#readme",
-  "dependencies": {
+  "peerDependencies": {
     "node-red-dashboard": "^2.24.1"
   },
   "files": [

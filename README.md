@@ -110,6 +110,6 @@
 ]
 ```
 #### Screenshots
-![ui_mp4frag flow](https://raw.githubusercontent.com/kevinGodell/node-red-contrib-ui-mp4frag/master/screenshots/ui_mp4frag_flow.png)
-![ui_mp4frag settings](https://raw.githubusercontent.com/kevinGodell/node-red-contrib-ui-mp4frag/master/screenshots/ui_mp4frag_settings.png)
-![ui_mp4frag ui](https://raw.githubusercontent.com/kevinGodell/node-red-contrib-ui-mp4frag/master/screenshots/ui_mp4frag_ui.png)
+![ui_mp4frag flow](https://raw.githubusercontent.com/kevinGodell/node-red-contrib-ui-mp4frag/master/screenshots/ui_mp4frag_flow_1.png)
+![ui_mp4frag settings](https://raw.githubusercontent.com/kevinGodell/node-red-contrib-ui-mp4frag/master/screenshots/ui_mp4frag_settings_1.png)
+![ui_mp4frag ui](https://raw.githubusercontent.com/kevinGodell/node-red-contrib-ui-mp4frag/master/screenshots/ui_mp4frag_ui_1.png)

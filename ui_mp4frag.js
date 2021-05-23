@@ -45,10 +45,6 @@ module.exports = RED => {
 
       this.videoOptions = 'preload="metadata" muted playsinline'; // disablePictureInPicture'; // todo: user configurable
 
-      this.videoStyle = 'width:100%;height:100%;'; // todo: user configurable
-
-      this.divStyle = 'padding:0;margin:0;width:100%;height:100%;overflow:hidden;border:1px solid grey;'; // todo: user configurable
-
       try {
         this.uiGroupNodeExists(); // throws
 
@@ -170,8 +166,23 @@ module.exports = RED => {
     }
 
     static renderInHead() {
-      return String.raw`<script id="${NODE_TYPE}_hls_js" type="text/javascript" src="${uiMp4fragHlsJsUrl}"></script>`;
-      // return String.raw`<script>const ${NODE_TYPE}_script = document.createElement('script');${NODE_TYPE}_script.type = 'text/javascript';${NODE_TYPE}_script.src = '${uiMp4fragHlsJs}';${NODE_TYPE}_script.async = false;${NODE_TYPE}_script.defer = false;const ${NODE_TYPE}_head = document.getElementsByTagName('head')[0];${NODE_TYPE}_head.appendChild(${NODE_TYPE}_script);</script>`;
+      return String.raw`
+<script id="${UiMp4fragNode.type}_hls_js" type="text/javascript" src="${uiMp4fragHlsJsUrl}"></script>
+<style>
+  .nr-dashboard-ui_mp4frag {
+    padding: 0;
+    overflow: hidden;
+  }
+  .container-ui_mp4frag {
+    width: 100%;
+    height: 100%;
+  }
+  .video-ui_mp4frag {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+  }
+</style>`;
     }
 
     renderInBody() {
@@ -189,8 +200,8 @@ module.exports = RED => {
 
       const initObjStr = JSON.stringify(initObj);
 
-      return String.raw`<div style="${this.divStyle}" ng-init='init(${initObjStr})'>
-        <video id="${this.videoID}" style="${this.videoStyle}" poster="${this.readyPoster}" ${this.videoOptions}></video>
+      return String.raw`<div class="container-ui_mp4frag" ng-init='init(${initObjStr})'>
+        <video class="video-ui_mp4frag" id="${this.videoID}" poster="${this.readyPoster}" ${this.videoOptions}></video>
       </div>`;
     }
 

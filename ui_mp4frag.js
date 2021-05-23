@@ -54,7 +54,7 @@ module.exports = RED => {
 
         UiMp4fragNode.validatePlayers(this.players); // throws
 
-        UiMp4fragNode.addToHead(); // adds the script to the head (only once)
+        this.addToHead(); // adds the script and style to the head (only once)
 
         this.addToBody(); // adds the html markup to the body
 
@@ -78,17 +78,17 @@ module.exports = RED => {
       }
     }
 
-    static addToHead() {
-      ++this.nodeCount;
+    addToHead() {
+      ++UiMp4fragNode.nodeCount;
 
-      if (this.nodeCount === 1 && this.headDone === undefined) {
-        this.headDone = addWidget({
+      if (UiMp4fragNode.nodeCount === 1 && typeof UiMp4fragNode.headDone === 'undefined') {
+        UiMp4fragNode.headDone = addWidget({
           node: '',
           group: '',
           order: 0,
           width: 0,
           height: 0,
-          format: this.renderInHead(),
+          format: UiMp4fragNode.renderInHead(),
           templateScope: 'global', // global causes `format` to be inserted in <head>
           emitOnlyNewValues: false,
           forwardInputMessages: false,
@@ -97,13 +97,13 @@ module.exports = RED => {
       }
     }
 
-    static removeFromHead() {
-      --this.nodeCount;
+    removeFromHead() {
+      --UiMp4fragNode.nodeCount;
 
-      if (this.nodeCount === 0 && typeof this.headDone === 'function') {
-        this.headDone();
+      if (UiMp4fragNode.nodeCount === 0 && typeof UiMp4fragNode.headDone === 'function') {
+        UiMp4fragNode.headDone();
 
-        this.headDone = undefined;
+        UiMp4fragNode.headDone = undefined;
       }
     }
 
@@ -154,7 +154,7 @@ module.exports = RED => {
     onClose(removed, done) {
       this.removeListener('close', this.onClose);
 
-      UiMp4fragNode.removeFromHead();
+      this.removeFromHead();
 
       this.removeFromBody();
 
@@ -235,6 +235,8 @@ module.exports = RED => {
   UiMp4fragNode.nodeCount = 0; // increment in (successful) constructor, decrement on close event
 
   UiMp4fragNode.type = 'ui_mp4frag';
+
+  UiMp4fragNode.headDone = undefined;
 
   const UiMp4fragSettings = {
     settings: {

@@ -1,56 +1,58 @@
 'use strict';
 
+const dashboard = require('node-red-dashboard');
+
+const initController = require('./lib/initController.js');
+
 module.exports = RED => {
-  const { _ } = RED; // locale string getter
+  const {
+    settings,
+    _,
+    nodes: { createNode, getNode, registerType },
+  } = RED;
 
-  const { createNode, getNode, registerType } = RED.nodes;
+  const { addWidget } = dashboard(RED);
 
-  const { addWidget } = RED.require('node-red-dashboard')(RED);
-
-  const { uiMp4fragHlsJsUrl = 'https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js' } = RED.settings;
-
-  const NODE_TYPE = 'ui_mp4frag';
-
-  const initController = require('./lib/initController.js');
+  const { uiMp4fragHlsJsUrl = 'https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js' } = settings;
 
   class UiMp4fragNode {
     constructor(config) {
       createNode(this, config);
 
-      this.group = config.group;
-
-      this.order = config.order || 0;
-
-      this.width = config.width;
-
-      this.height = config.height;
-
-      this.hlsJsConfig = config.hlsJsConfig;
-
-      this.players = config.players;
-
-      this.errorPoster = config.errorPoster;
-
-      this.readyPoster = config.readyPoster;
-
-      this.play = config.play;
-
-      this.unload = config.unload;
-
-      this.retry = config.retry;
-
-      this.threshold = config.threshold;
-
-      this.videoID = `video_${NODE_TYPE}_${this.id}`;
-
-      this.videoOptions = 'preload="metadata" muted playsinline'; // disablePictureInPicture'; // todo: user configurable
-
       try {
-        this.uiGroupNodeExists(); // throws
+        this.group = config.group;
 
-        this.sanitizeHlsJsConfig(); // throws
+        this.order = config.order || 0;
 
-        this.sanitizePlayers(); // throws
+        this.width = config.width;
+
+        this.height = config.height;
+
+        this.hlsJsConfig = UiMp4fragNode.jsonParse(config.hlsJsConfig);
+
+        this.players = UiMp4fragNode.jsonParse(config.players);
+
+        this.errorPoster = config.errorPoster;
+
+        this.readyPoster = config.readyPoster;
+
+        this.play = config.play;
+
+        this.unload = config.unload;
+
+        this.retry = config.retry;
+
+        this.threshold = config.threshold;
+
+        this.videoID = `${UiMp4fragNode.type}_video_${this.id}`;
+
+        this.videoOptions = 'preload="metadata" muted playsinline'; // disablePictureInPicture'; // todo: user configurable
+
+        UiMp4fragNode.validateGroup(this.group); // throws
+
+        UiMp4fragNode.validateHlsJsConfig(this.hlsJsConfig); // throws
+
+        UiMp4fragNode.validatePlayers(this.players); // throws
 
         UiMp4fragNode.addToHead(); // adds the script to the head (only once)
 
@@ -66,8 +68,8 @@ module.exports = RED => {
       }
     }
 
-    uiGroupNodeExists() {
-      const node = getNode(this.group);
+    static validateGroup(group) {
+      const node = getNode(group);
 
       const type = node && node.type;
 
@@ -173,14 +175,17 @@ module.exports = RED => {
     padding: 0;
     overflow: hidden;
   }
-  .container-ui_mp4frag {
+  .ui-mp4frag-container {
     width: 100%;
     height: 100%;
   }
-  .video-ui_mp4frag {
+  .ui-mp4frag-video {
     width: 100%;
     height: 100%;
     object-fit: fill;
+  }
+  .ui-mp4frag-controls {
+   /* todo */
   }
 </style>`;
     }
@@ -200,45 +205,42 @@ module.exports = RED => {
 
       const initObjStr = JSON.stringify(initObj);
 
-      return String.raw`<div class="container-ui_mp4frag" ng-init='init(${initObjStr})'>
-        <video class="video-ui_mp4frag" id="${this.videoID}" poster="${this.readyPoster}" ${this.videoOptions}></video>
-      </div>`;
+      return String.raw`
+<div class="ui-mp4frag-container" ng-init='init(${initObjStr})'>
+  <video id="${this.videoID}" class="ui-mp4frag-video" poster="${this.readyPoster}" ${this.videoOptions}></video>
+</div>`;
     }
 
-    static jsonParse(str) {
-      try {
-        const value = JSON.parse(str);
-        const type = typeof value;
-        return [value, type];
-      } catch (err) {
-        return [undefined, 'undefined'];
-      }
-    }
-
-    sanitizeHlsJsConfig() {
-      const [value, type] = UiMp4fragNode.jsonParse(this.hlsJsConfig);
-
-      if (type === 'object' && value !== null) {
-        this.hlsJsConfig = value;
-      } else {
+    static validateHlsJsConfig(hlsJsConfig) {
+      if (typeof hlsJsConfig !== 'object' || hlsJsConfig === null) {
         throw new Error(_('ui_mp4frag.error.invalid_hls_js_config'));
       }
     }
 
-    sanitizePlayers() {
-      if (Array.isArray(this.players) === false || this.players.length === 0) {
+    static validatePlayers(players) {
+      if (Array.isArray(players) === false || players.length === 0) {
         throw new Error(_('ui_mp4frag.error.invalid_player_order'));
+      }
+    }
+
+    static jsonParse(str) {
+      try {
+        return JSON.parse(str);
+      } catch (err) {
+        return str;
       }
     }
   }
 
   UiMp4fragNode.nodeCount = 0; // increment in (successful) constructor, decrement on close event
 
-  const UiMp4fragMeta = {
+  UiMp4fragNode.type = 'ui_mp4frag';
+
+  const UiMp4fragSettings = {
     settings: {
       uiMp4fragHlsJsUrl: { value: uiMp4fragHlsJsUrl, exportable: true },
     },
   };
 
-  registerType(NODE_TYPE, UiMp4fragNode, UiMp4fragMeta);
+  registerType(UiMp4fragNode.type, UiMp4fragNode, UiMp4fragSettings);
 };

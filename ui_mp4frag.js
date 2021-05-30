@@ -4,8 +4,11 @@ const dashboard = require('node-red-dashboard');
 
 const initController = require('./lib/initController.js');
 
+const hlsJsPath = require.resolve('hls.js/dist/hls.min.js');
+
 module.exports = RED => {
   const {
+    httpNode,
     settings,
     _,
     nodes: { createNode, getNode, registerType },
@@ -52,6 +55,10 @@ module.exports = RED => {
 
         UiMp4fragNode.validatePlayers(this.players); // throws
 
+        ++UiMp4fragNode.nodeCount;
+
+        this.createHttpRoute(); // serve hls.min.js
+
         this.addToHead(); // adds the script and style to the head (only once)
 
         this.addToBody(); // adds the html markup to the body
@@ -76,9 +83,35 @@ module.exports = RED => {
       }
     }
 
-    addToHead() {
-      ++UiMp4fragNode.nodeCount;
+    createHttpRoute() {
+      if (UiMp4fragNode.nodeCount === 1) {
+        httpNode.get('/ui_mp4frag/hls.min.js', (req, res) => {
+          res.sendFile(hlsJsPath, {
+            headers: {
+              'Cache-Control': 'public, max-age=31536000',
+            },
+          });
+        });
+      }
+    }
 
+    destroyHttpRoute() {
+      if (UiMp4fragNode.nodeCount === 0) {
+        const { stack } = RED.httpNode._router;
+
+        for (let i = stack.length - 1; i >= 0; --i) {
+          const layer = stack[i];
+
+          if (layer && layer.route && layer.route.path === '/ui_mp4frag/hls.min.js') {
+            stack.splice(i, 1);
+
+            break;
+          }
+        }
+      }
+    }
+
+    addToHead() {
       if (UiMp4fragNode.nodeCount === 1 && typeof UiMp4fragNode.headDone === 'undefined') {
         UiMp4fragNode.headDone = addWidget({
           node: '',
@@ -96,8 +129,6 @@ module.exports = RED => {
     }
 
     removeFromHead() {
-      --UiMp4fragNode.nodeCount;
-
       if (UiMp4fragNode.nodeCount === 0 && typeof UiMp4fragNode.headDone === 'function') {
         UiMp4fragNode.headDone();
 
@@ -152,6 +183,10 @@ module.exports = RED => {
     onClose(removed, done) {
       this.removeListener('close', this.onClose);
 
+      --UiMp4fragNode.nodeCount;
+
+      this.destroyHttpRoute();
+
       this.removeFromHead();
 
       this.removeFromBody();
@@ -167,7 +202,7 @@ module.exports = RED => {
 
     static renderInHead() {
       return String.raw`
-<script id="${UiMp4fragNode.type}_hls_js" type="text/javascript" src="${UiMp4fragNode.hlsJsUrl}"></script>
+<script type="text/javascript" src="/ui_mp4frag/hls.min.js"></script>
 <style>
   .nr-dashboard-ui_mp4frag {
     padding: 0;
@@ -230,34 +265,11 @@ module.exports = RED => {
     }
   }
 
-  if (typeof settings.uiMp4frag !== 'object') {
-    settings.uiMp4frag = {};
-  }
-
-  const { uiMp4frag } = settings;
-
-  uiMp4frag.hlsJsUrl = /hls/i.test(uiMp4frag.hlsJsUrl) ? uiMp4frag.hlsJsUrl : 'https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js';
-
-  const { hlsJsUrl } = uiMp4frag;
-
-  UiMp4fragNode.hlsJsUrl = hlsJsUrl;
-
   UiMp4fragNode.nodeCount = 0; // increment in (successful) constructor, decrement on close event
 
   UiMp4fragNode.headDone = undefined;
 
   UiMp4fragNode.type = 'ui_mp4frag';
 
-  UiMp4fragNode.settings = {
-    settings: {
-      uiMp4frag: {
-        value: {
-          hlsJsUrl,
-        },
-        exportable: true,
-      },
-    },
-  };
-
-  registerType(UiMp4fragNode.type, UiMp4fragNode, UiMp4fragNode.settings);
+  registerType(UiMp4fragNode.type, UiMp4fragNode);
 };

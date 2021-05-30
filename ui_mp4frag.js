@@ -166,8 +166,8 @@ module.exports = RED => {
     }
 
     static renderInHead() {
+      //<script id="${UiMp4fragNode.type}_hls_js" type="text/javascript" src="${UiMp4fragNode.hlsJsUrl}"></script>
       return String.raw`
-<script id="${UiMp4fragNode.type}_hls_js" type="text/javascript" src="${UiMp4fragNode.hlsJsUrl}"></script>
 <style>
   .nr-dashboard-ui_mp4frag {
     padding: 0;
@@ -230,17 +230,17 @@ module.exports = RED => {
     }
   }
 
-  if (typeof settings.uiMp4frag !== 'object') {
+  /*if (typeof settings.uiMp4frag !== 'object') {
     settings.uiMp4frag = {};
-  }
+  }*/
 
-  const { uiMp4frag } = settings;
+  //const { uiMp4frag } = settings;
 
-  uiMp4frag.hlsJsUrl = /hls/i.test(uiMp4frag.hlsJsUrl) ? uiMp4frag.hlsJsUrl : 'https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js';
+  //uiMp4frag.hlsJsUrl = /hls/i.test(uiMp4frag.hlsJsUrl) ? uiMp4frag.hlsJsUrl : 'https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js';
 
-  const { hlsJsUrl } = uiMp4frag;
+  //const { hlsJsUrl } = uiMp4frag;
 
-  UiMp4fragNode.hlsJsUrl = hlsJsUrl;
+  //UiMp4fragNode.hlsJsUrl = hlsJsUrl;
 
   UiMp4fragNode.nodeCount = 0; // increment in (successful) constructor, decrement on close event
 
@@ -248,7 +248,7 @@ module.exports = RED => {
 
   UiMp4fragNode.type = 'ui_mp4frag';
 
-  UiMp4fragNode.settings = {
+  /*UiMp4fragNode.settings = {
     settings: {
       uiMp4frag: {
         value: {
@@ -257,7 +257,7 @@ module.exports = RED => {
         exportable: true,
       },
     },
-  };
+  };*/
 
-  registerType(UiMp4fragNode.type, UiMp4fragNode, UiMp4fragNode.settings);
+  registerType(UiMp4fragNode.type, UiMp4fragNode/*, UiMp4fragNode.settings*/);
 };

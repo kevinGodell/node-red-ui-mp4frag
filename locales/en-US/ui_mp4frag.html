@@ -1,0 +1,164 @@
+<script data-help-name="ui_mp4frag" type="text/html">
+  <p>Play fragmented mp4 video on supported browsers.</p>
+  <ul>
+    <li>ui video player loads after receiving a payload with compatible video sources</li>
+  </ul>
+
+  <h3>Inputs</h3>
+  <ul>
+    <li>
+      <h4>HLS Playlist</h4>
+      <ul>
+        <li>http url to hls playlist</li>
+        <li>playlist must use file format .m3u8</li>
+        <li>
+          send an input <code>msg</code> structured as:
+          <pre class="form-tips" style="min-width: 450px"><code>
+{
+  payload: '/mp4frag/front_door/hls.m3u8'
+}
+          </code></pre>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <h4>Mp4 Video</h4>
+      <ul>
+        <li>http url to mp4 video</li>
+        <li>video must use file format .mp4</li>
+        <li>
+          send an input <code>msg</code> structured as:
+          <pre class="form-tips" style="min-width: 450px"><code>
+{
+  payload: '/mp4frag/front_door/video.mp4'
+}
+          </code></pre>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <h4>Socket.io</h4>
+      <ul>
+        <li>socket.io connection details</li>
+        <li>currently only works with <a href="https://github.com/kevinGodell/node-red-contrib-mp4frag">node-red-contrib-mp4frag</a></li>
+        <li>
+          send an input <code>msg</code> structured as:
+          <pre class="form-tips" style="min-width: 450px"><code>
+{
+  payload: {
+    socketIo: {
+      path: '/mp4frag/socket.io',
+      namespace: '/front_door',
+      key: '4454022a67ff1abb471c00871ae1ef',
+    }
+  }
+}
+          </code></pre>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <h4>Multiple Sources</h4>
+      <ul>
+        <li>list multiple video sources</li>
+        <li>playback priority based on player order and browser support</li>
+        <li>
+          send an input <code>msg</code> structured as:
+          <pre class="form-tips" style="min-width: 450px"><code>
+{
+  payload: {
+    hlsPlaylist: '/mp4frag/front_door/hls.m3u8',
+    mp4Video: '/mp4frag/front_door/video.mp4',
+    socketIo: {
+      path: '/mp4frag/socket.io',
+      namespace: '/front_door',
+      key: '4454022a67ff1abb471c00871ae1ef',
+    }
+  }
+}
+          </code></pre>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>Properties</h3>
+  <ul>
+    <li>
+      <h4>Video Options</h4>
+      <ul>
+        <li>
+          <h5>Play</h5>
+          <ul>
+            <li>automatically try to play video after source is loaded</li>
+          </ul>
+        </li>
+        <li>
+          <h5>Unload</h5>
+          <ul>
+            <li>unload video source if player becomes hidden</li>
+          </ul>
+        </li>
+        <li>
+          <h5>Threshold</h5>
+          <ul>
+            <li>threshold percentage used to determine if player is hidden</li>
+          </ul>
+        </li>
+        <li>
+          <h5>Ready</h5>
+          <ul>
+            <li>image to show as video player poster after initialized</li>
+            <li>source can be a base64 encoded or http url</li>
+          </ul>
+        </li>
+        <li>
+          <h5>Error</h5>
+          <ul>
+            <li>image to show as video player poster after fatal error</li>
+            <li>source can be a base64 encoded or http url</li>
+          </ul>
+        </li>
+        <li>
+          <h5>Players</h5>
+          <ul>
+            <li>determines which video player library to use</li>
+            <li>determines which video player source to use</li>
+            <li>first browser compatible format found is used</li>
+            <li>compatibility is checked in the selected order</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <h4>HLS.js options</h4>
+      <ul>
+        <li>
+          <h5>Config</h5>
+          <ul>
+            <li>configuration object passed to a new Hls instance</li>
+            <li>please see the <a href="https://github.com/video-dev/hls.js/blob/master/docs/API.md#fine-tuning">hls.js docs</a> for a list of available options</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>Settings</h3>
+  <ul>
+    <li>
+      <h4><code>hlsJsUrl</code></h4>
+      <ul>
+        <li>http url to the HLS.js library</li>
+      </ul>
+    </li>
+  </ul>
+  <p style="margin-left: 15px">Configured in <a href="https://nodered.org/docs/user-guide/runtime/settings-file">settings.js</a></p>
+  <pre class="form-tips" style="min-width: 625px; margin-left: 15px;"><code>
+{
+  uiMp4frag: {
+    hlsJsUrl: 'https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js'
+  }
+}
+  </code></pre>
+</script>

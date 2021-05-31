@@ -10,24 +10,6 @@
 
   const PLAYERS = ['socket.io', 'hls.js', 'hls', 'mp4'];
 
-  const valToBool = (val, def) => {
-    if (typeof val === 'boolean') {
-      return val;
-    }
-    if (typeof val === 'string') {
-      return val === 'true';
-    }
-    return def;
-  };
-
-  const valToFloat = (val, def) => {
-    val = Math.round(Number.parseFloat(val) * 10) / 10;
-    if (Number.isNaN(val) === false) {
-      return val;
-    }
-    return def;
-  };
-
   // register node
   RED.nodes.registerType('ui_mp4frag', {
     align: 'left',
@@ -70,19 +52,21 @@
       play: {
         value: true,
         validate: function (play) {
-          return typeof play === 'boolean';
+          return ['true', 'false'].includes(play);
         },
       },
       unload: {
         value: true,
         validate: function (unload) {
-          return typeof unload === 'boolean';
+          return ['true', 'false'].includes(unload);
         },
       },
       threshold: {
-        value: 0.5,
+        value: 0.1,
         validate: function (threshold) {
-          return typeof threshold === 'number' && threshold >= 0.1 && threshold <= 0.9;
+          const float = Number.parseFloat(threshold);
+
+          return float >= 0.1 && float <= 0.9;
         },
       },
       players: {
@@ -107,25 +91,19 @@
         group: '#node-input-group',
       });
 
-      $('#node-input-play-container')
-        .typedInput({ types: ['bool'] })
-        .typedInput('value', this.play);
+      $('#node-input-play').typedInput({ types: ['bool'] });
 
-      $('#node-input-unload-container')
-        .typedInput({ types: ['bool'] })
-        .typedInput('value', this.unload);
+      $('#node-input-unload').typedInput({ types: ['bool'] });
 
-      $('#node-input-threshold-container')
-        .typedInput({
-          types: [
-            {
-              value: 'num',
-              icon: 'fa fa-sort-numeric-asc',
-              options: ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9'],
-            },
-          ],
-        })
-        .typedInput('value', this.threshold);
+      $('#node-input-threshold').typedInput({
+        types: [
+          {
+            value: 'num',
+            icon: 'fa fa-sort-numeric-asc',
+            options: ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9'],
+          },
+        ],
+      });
 
       $('#node-input-hlsJsConfig').typedInput({ types: ['json'] });
 
@@ -145,7 +123,7 @@
         },
         addButton: false,
         sortable: true,
-        // removable: true
+        removable: false,
       });
 
       this.players.forEach(player => {
@@ -168,12 +146,6 @@
         .each((index, row) => {
           this.players.push(row.data('data'));
         });
-
-      this.play = valToBool($('#node-input-play-container').typedInput('value'), this._def.defaults.play.value);
-
-      this.unload = valToBool($('#node-input-unload-container').typedInput('value'), this._def.defaults.unload.value);
-
-      this.threshold = valToFloat($('#node-input-threshold-container').typedInput('value'), this._def.defaults.threshold.value);
     },
   });
 </script>
@@ -200,18 +172,18 @@
     <legend>Video Options</legend>
 
     <div class="form-row">
-      <label for="node-input-play-container"><i class="fa fa-play"></i> Play</label>
-      <input type="text" id="node-input-play-container" />
+      <label for="node-input-play"><i class="fa fa-play"></i> Play</label>
+      <input type="text" id="node-input-play" />
     </div>
 
     <div class="form-row">
-      <label for="node-input-unload-container"><i class="fa fa-eye"></i> Unload</label>
-      <input type="text" id="node-input-unload-container" />
+      <label for="node-input-unload"><i class="fa fa-eye"></i> Unload</label>
+      <input type="text" id="node-input-unload" />
     </div>
 
     <div class="form-row">
-      <label for="node-input-threshold-container"><i class="fa fa-percent"></i> Threshold</label>
-      <input type="text" id="node-input-threshold-container" />
+      <label for="node-input-threshold"><i class="fa fa-percent"></i> Threshold</label>
+      <input type="text" id="node-input-threshold" />
     </div>
 
     <div class="form-row">
@@ -225,6 +197,7 @@
     </div>
 
     <div class="form-row">
+      <label for="node-input-players-container"><i class="fa fa-picture-o"></i> Players</label>
       <ol id="node-input-players-container"></ol>
     </div>
   </fieldset>

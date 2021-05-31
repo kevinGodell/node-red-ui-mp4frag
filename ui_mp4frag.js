@@ -37,13 +37,11 @@ module.exports = RED => {
 
         this.readyPoster = config.readyPoster;
 
-        this.play = config.play;
+        this.play = config.play === 'true' || config.play === true ? true : false;
 
-        this.unload = config.unload;
+        this.unload = config.unload === 'true' || config.unload === true ? true : false;
 
-        this.retry = config.retry;
-
-        this.threshold = config.threshold;
+        this.threshold = Number.parseFloat(config.threshold);
 
         this.videoID = `${UiMp4fragNode.type}_video_${this.id}`;
 
@@ -54,6 +52,8 @@ module.exports = RED => {
         UiMp4fragNode.validateHlsJsConfig(this.hlsJsConfig); // throws
 
         UiMp4fragNode.validatePlayers(this.players); // throws
+
+        UiMp4fragNode.validateThreshold(this.threshold); // throws
 
         ++UiMp4fragNode.nodeCount;
 
@@ -97,7 +97,7 @@ module.exports = RED => {
 
     destroyHttpRoute() {
       if (UiMp4fragNode.nodeCount === 0) {
-        const { stack } = RED.httpNode._router;
+        const { stack } = httpNode._router;
 
         for (let i = stack.length - 1; i >= 0; --i) {
           const layer = stack[i];
@@ -253,6 +253,12 @@ module.exports = RED => {
     static validatePlayers(players) {
       if (Array.isArray(players) === false || players.length === 0) {
         throw new Error(_('ui_mp4frag.error.invalid_player_order'));
+      }
+    }
+
+    static validateThreshold(threshold) {
+      if (Number.isNaN(threshold) || threshold < 0.1 || threshold > 0.9) {
+        throw new Error(_('ui_mp4frag.error.invalid_threshold'));
       }
     }
 

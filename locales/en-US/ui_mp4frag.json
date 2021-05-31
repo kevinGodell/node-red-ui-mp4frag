@@ -15,7 +15,8 @@
     "error": {
       "invalid_ui_group": "invalid ui group",
       "invalid_hls_js_config": "invalid HLS.js config",
-      "invalid_player_order": "invalid player order"
+      "invalid_player_order": "invalid player order",
+      "invalid_threshold": "invalid threshold"
     }
   }
 }

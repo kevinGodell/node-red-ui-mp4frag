@@ -37,15 +37,17 @@ module.exports = RED => {
 
         this.readyPoster = config.readyPoster;
 
-        this.play = config.play === 'true' || config.play === true ? true : false;
+        this.play = config.play === 'true' || config.play === true;
 
-        this.unload = config.unload === 'true' || config.unload === true ? true : false;
+        this.unload = config.unload === 'true' || config.unload === true;
 
         this.threshold = Number.parseFloat(config.threshold);
 
-        this.videoID = `${UiMp4fragNode.type}_video_${this.id}`;
+        this.containerId = `${UiMp4fragNode.type}_container_${this.id}`;
 
-        this.videoOptions = 'preload="metadata" muted playsinline'; // disablePictureInPicture'; // todo: user configurable
+        this.videoId = `${UiMp4fragNode.type}_video_${this.id}`;
+
+        this.videoOptions = 'preload="metadata" muted playsinline'; // todo: user configurable
 
         UiMp4fragNode.validateGroup(this.group); // throws
 
@@ -232,15 +234,15 @@ module.exports = RED => {
         retry: this.retry,
         threshold: this.threshold,
         hlsJsConfig: this.hlsJsConfig,
-        videoID: this.videoID,
+        videoId: this.videoId,
         players: this.players,
       };
 
       const initObjStr = JSON.stringify(initObj);
 
       return String.raw`
-<div class="ui-mp4frag-container" ng-init='init(${initObjStr})'>
-  <video id="${this.videoID}" class="ui-mp4frag-video" poster="${this.readyPoster}" ${this.videoOptions}></video>
+<div id="${this.containerId}" class="ui-mp4frag-container" ng-init='init(${initObjStr})'>
+  <video id="${this.videoId}" class="ui-mp4frag-video" poster="${this.readyPoster}" ${this.videoOptions}></video>
 </div>`;
     }
 

@@ -57,18 +57,20 @@ module.exports = RED => {
 
         UiMp4fragNode.validateThreshold(this.threshold); // throws
 
-        ++UiMp4fragNode.nodeCount;
+        this.addToBody(); // adds the html markup to the body
 
-        this.createHttpRoute(); // serve hls.min.js
+        ++UiMp4fragNode.nodeCount;
 
         this.addToHead(); // adds the script and style to the head (only once)
 
-        this.addToBody(); // adds the html markup to the body
+        this.createHttpRoute(); // serve hls.min.js
 
         this.on('close', this.onClose); // listen to the close event
 
         this.status({ fill: 'green', shape: 'ring', text: _('ui_mp4frag.info.ready') });
       } catch (err) {
+        // console.log(err);
+
         this.error(err);
 
         this.status({ fill: 'red', shape: 'dot', text: err.toString() });

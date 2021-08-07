@@ -49,10 +49,10 @@
         value: JSON.stringify(HLS_JS_CONFIG),
         validate: RED.validators.typedInput('json'),
       },
-      play: {
+      autoplay: {
         value: true,
-        validate: function (play) {
-          return ['true', 'false'].includes(play);
+        validate: function (autoplay) {
+          return ['true', 'false'].includes(autoplay);
         },
       },
       unload: {
@@ -66,7 +66,19 @@
         validate: function (threshold) {
           const float = Number.parseFloat(threshold);
 
-          return float >= 0.1 && float <= 0.9;
+          return float >= 0 && float <= 1;
+        },
+      },
+      controls: {
+        value: true,
+        validate: function (controls) {
+          return ['true', 'false'].includes(controls);
+        },
+      },
+      muted: {
+        value: true,
+        validate: function (muted) {
+          return ['true', 'false'].includes(muted);
         },
       },
       players: {
@@ -77,12 +89,12 @@
       },
     },
     icon: 'font-awesome/fa-file-video-o',
-    inputLabels: 'widget input',
+    inputLabels: 'playlist',
     inputs: 1,
     label: function () {
       return this.name || 'ui_mp4frag';
     },
-    outputLabels: 'widget output',
+    outputLabels: 'output',
     outputs: 1,
     oneditprepare: function () {
       $('#node-input-size').elementSizer({
@@ -91,7 +103,7 @@
         group: '#node-input-group',
       });
 
-      $('#node-input-play').typedInput({ types: ['bool'] });
+      $('#node-input-autoplay').typedInput({ types: ['bool'] });
 
       $('#node-input-unload').typedInput({ types: ['bool'] });
 
@@ -100,10 +112,14 @@
           {
             value: 'num',
             icon: 'fa fa-sort-numeric-asc',
-            options: ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9'],
+            options: ['0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0'],
           },
         ],
       });
+
+      $('#node-input-controls').typedInput({ types: ['bool'] });
+
+      $('#node-input-muted').typedInput({ types: ['bool'] });
 
       $('#node-input-hlsJsConfig').typedInput({ types: ['json'] });
 
@@ -172,32 +188,42 @@
     <legend>Video Options</legend>
 
     <div class="form-row">
-      <label for="node-input-play"><i class="fa fa-play"></i> Play</label>
-      <input type="text" id="node-input-play" />
+      <label for="node-input-autoplay"><i class="fa fa-play fa-fw"></i> Autoplay</label>
+      <input type="text" id="node-input-autoplay" />
     </div>
 
     <div class="form-row">
-      <label for="node-input-unload"><i class="fa fa-eye"></i> Unload</label>
+      <label for="node-input-unload"><i class="fa fa-eye fa-fw"></i> Unload</label>
       <input type="text" id="node-input-unload" />
     </div>
 
     <div class="form-row">
-      <label for="node-input-threshold"><i class="fa fa-percent"></i> Threshold</label>
+      <label for="node-input-threshold"><i class="fa fa-percent fa-fw"></i> Threshold</label>
       <input type="text" id="node-input-threshold" />
     </div>
 
     <div class="form-row">
-      <label for="node-input-readyPoster"><i class="fa fa-picture-o"></i> Ready</label>
+      <label for="node-input-controls"><i class="fa fa-sliders fa-fw"></i> Controls</label>
+      <input type="text" id="node-input-controls" />
+    </div>
+
+    <div class="form-row">
+      <label for="node-input-muted"><i class="fa fa-volume-off fa-fw"></i> Muted</label>
+      <input type="text" id="node-input-muted" />
+    </div>
+
+    <div class="form-row">
+      <label for="node-input-readyPoster"><i class="fa fa-file-image-o fa-fw"></i> Ready</label>
       <input type="text" id="node-input-readyPoster" />
     </div>
 
     <div class="form-row">
-      <label for="node-input-errorPoster"><i class="fa fa-picture-o"></i> Error</label>
+      <label for="node-input-errorPoster"><i class="fa fa-file-image-o fa-fw"></i> Error</label>
       <input type="text" id="node-input-errorPoster" />
     </div>
 
     <div class="form-row">
-      <label for="node-input-players-container"><i class="fa fa-picture-o"></i> Players</label>
+      <label for="node-input-players-container"><i class="fa fa-file-video-o fa-fw"></i> Players</label>
       <ol id="node-input-players-container"></ol>
     </div>
   </fieldset>
@@ -206,7 +232,7 @@
     <legend>HLS.js Options</legend>
 
     <div class="form-row">
-      <label for="node-input-hlsJsConfig"><i class="fa fa-cog"></i> Config</label>
+      <label for="node-input-hlsJsConfig"><i class="fa fa-cog fa-fw"></i> Config</label>
       <input type="text" id="node-input-hlsJsConfig" />
     </div>
   </fieldset>

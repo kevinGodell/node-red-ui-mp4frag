@@ -37,17 +37,19 @@ module.exports = RED => {
 
         this.readyPoster = config.readyPoster;
 
-        this.play = config.play === 'true' || config.play === true;
+        this.autoplay = config.autoplay !== false && config.autoplay !== 'false'; // default to true if no value
 
-        this.unload = config.unload === 'true' || config.unload === true;
+        this.controls = config.controls !== false && config.controls !== 'false'; // default to true if no value
 
-        this.threshold = Number.parseFloat(config.threshold);
+        this.muted = config.muted !== false && config.muted !== 'false'; // default to true if no value
+
+        this.unload = config.unload !== false && config.unload !== 'false'; // default to true if no value
+
+        this.threshold = (f => (f >= 0 ? f : 0.1))(Number.parseFloat(config.threshold));
 
         this.containerId = `${UiMp4fragNode.type}_container_${this.id}`;
 
         this.videoId = `${UiMp4fragNode.type}_video_${this.id}`;
-
-        this.videoOptions = 'preload="metadata" muted playsinline'; // todo: user configurable
 
         UiMp4fragNode.validateGroup(this.group); // throws
 
@@ -59,7 +61,7 @@ module.exports = RED => {
 
         this.addToBody(); // adds the html markup to the body
 
-        ++UiMp4fragNode.nodeCount;
+        ++UiMp4fragNode.nodeCount; // needed for this.addToHead()
 
         this.addToHead(); // adds the script and style to the head (only once)
 
@@ -69,8 +71,6 @@ module.exports = RED => {
 
         this.status({ fill: 'green', shape: 'ring', text: _('ui_mp4frag.info.ready') });
       } catch (err) {
-        // console.log(err);
-
         this.error(err);
 
         this.status({ fill: 'red', shape: 'dot', text: err.toString() });
@@ -85,6 +85,20 @@ module.exports = RED => {
       if (type !== 'ui_group') {
         throw new Error(_('ui_mp4frag.error.invalid_ui_group'));
       }
+    }
+
+    createVideoOptions() {
+      const videoOptions = ['preload="metadata"', 'playsinline'];
+
+      if (this.controls) {
+        videoOptions.push('controls');
+      }
+
+      if (this.muted) {
+        videoOptions.push('muted');
+      }
+
+      return videoOptions.join(' ');
     }
 
     createHttpRoute() {
@@ -150,22 +164,28 @@ module.exports = RED => {
         format: this.renderInBody(),
         templateScope: 'local', // local causes `format` to be inserted in <body>
         emitOnlyNewValues: false,
-        forwardInputMessages: false, // true = we do not need to listen to on input event and manually forward msg
+        forwardInputMessages: true, // true = we do not need to listen to on input event and manually forward msg
         storeFrontEndInputAsState: false,
-        persistantFrontEndValue: true,
+        persistantFrontEndValue: false,
         convertBack: value => {
           // console.log('convert back', {value});
           return value;
         },
         beforeEmit: (msg, payload) => {
-          // console.log('before emit');
+          // console.log('before emit', {msg}, {payload});
           if (!payload) {
             this.status({ fill: 'green', shape: 'ring', text: _('ui_mp4frag.info.unloaded') });
           } else {
             this.status({ fill: 'green', shape: 'dot', text: _('ui_mp4frag.info.loaded') });
           }
+
+          msg.videoId = this.videoId;
+
+          msg.containerId = this.containerId;
+
           return { msg };
         },
+
         beforeSend: (msg, orig) => {
           // console.log('before send', {msg}, {orig});
           if (orig) {
@@ -185,6 +205,8 @@ module.exports = RED => {
     }
 
     onClose(removed, done) {
+      // this.send({ payload: 'good bye'});
+
       this.removeListener('close', this.onClose);
 
       --UiMp4fragNode.nodeCount;
@@ -221,9 +243,6 @@ module.exports = RED => {
     height: 100%;
     object-fit: fill;
   }
-  .ui-mp4frag-controls {
-   /* todo */
-  }
 </style>`;
     }
 
@@ -231,7 +250,7 @@ module.exports = RED => {
       const initObj = {
         readyPoster: this.readyPoster,
         errorPoster: this.errorPoster,
-        play: this.play,
+        autoplay: this.autoplay,
         unload: this.unload,
         retry: this.retry,
         threshold: this.threshold,
@@ -242,9 +261,11 @@ module.exports = RED => {
 
       const initObjStr = JSON.stringify(initObj);
 
+      const videoOptions = this.createVideoOptions();
+
       return String.raw`
 <div id="${this.containerId}" class="ui-mp4frag-container" ng-init='init(${initObjStr})'>
-  <video id="${this.videoId}" class="ui-mp4frag-video" poster="${this.readyPoster}" ${this.videoOptions}></video>
+  <video id="${this.videoId}" class="ui-mp4frag-video" poster="${this.readyPoster}" ${videoOptions}></video>
 </div>`;
     }
 
@@ -261,7 +282,7 @@ module.exports = RED => {
     }
 
     static validateThreshold(threshold) {
-      if (Number.isNaN(threshold) || threshold < 0.1 || threshold > 0.9) {
+      if (Number.isNaN(threshold) || threshold < 0 || threshold > 1) {
         throw new Error(_('ui_mp4frag.error.invalid_threshold'));
       }
     }

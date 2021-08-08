@@ -163,7 +163,7 @@ module.exports = RED => {
         height: this.height,
         format: this.renderInBody(),
         templateScope: 'local', // local causes `format` to be inserted in <body>
-        emitOnlyNewValues: true,
+        emitOnlyNewValues: false,
         forwardInputMessages: true, // true = we do not need to listen to on input event and manually forward msg
         storeFrontEndInputAsState: false,
         persistantFrontEndValue: true,

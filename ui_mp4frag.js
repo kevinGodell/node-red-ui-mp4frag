@@ -163,34 +163,31 @@ module.exports = RED => {
         height: this.height,
         format: this.renderInBody(),
         templateScope: 'local', // local causes `format` to be inserted in <body>
-        emitOnlyNewValues: false,
+        emitOnlyNewValues: true,
         forwardInputMessages: true, // true = we do not need to listen to on input event and manually forward msg
         storeFrontEndInputAsState: false,
-        persistantFrontEndValue: false,
-        convertBack: value => {
-          // console.log('convert back', {value});
+        persistantFrontEndValue: true,
+        convert: value => {
           return value;
         },
-        beforeEmit: (msg, payload) => {
-          // console.log('before emit', {msg}, {payload});
-          if (!payload) {
+        beforeEmit: (msg, value) => {
+          if (!value) {
             this.status({ fill: 'green', shape: 'ring', text: _('ui_mp4frag.info.unloaded') });
           } else {
             this.status({ fill: 'green', shape: 'dot', text: _('ui_mp4frag.info.loaded') });
           }
 
+          return { msg };
+        },
+        convertBack: value => {
+          return value;
+        },
+        beforeSend: msg => {
           msg.videoId = this.videoId;
 
           msg.containerId = this.containerId;
 
-          return { msg };
-        },
-
-        beforeSend: (msg, orig) => {
-          // console.log('before send', {msg}, {orig});
-          if (orig) {
-            return orig.msg;
-          }
+          return msg;
         },
         initController: initController,
       });

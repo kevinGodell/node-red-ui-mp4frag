@@ -50,13 +50,13 @@
         validate: RED.validators.typedInput('json'),
       },
       autoplay: {
-        value: true,
+        value: 'true',
         validate: function (autoplay) {
           return ['true', 'false'].includes(autoplay);
         },
       },
       unload: {
-        value: true,
+        value: 'true',
         validate: function (unload) {
           return ['true', 'false'].includes(unload);
         },
@@ -70,13 +70,13 @@
         },
       },
       controls: {
-        value: true,
+        value: 'true',
         validate: function (controls) {
           return ['true', 'false'].includes(controls);
         },
       },
       muted: {
-        value: true,
+        value: 'true',
         validate: function (muted) {
           return ['true', 'false'].includes(muted);
         },

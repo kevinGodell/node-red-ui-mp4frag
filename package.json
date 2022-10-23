@@ -31,16 +31,16 @@
   },
   "homepage": "https://github.com/kevinGodell/node-red-contrib-ui-mp4frag#readme",
   "devDependencies": {
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-prettier": "^3.4.1",
-    "prettier": "^2.5.0"
+    "eslint": "^8.26.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.7.1"
   },
   "peerDependencies": {
     "node-red-dashboard": ">=2"
   },
   "dependencies": {
-    "hls.js": "^1.1.1"
+    "hls.js": "^1.2.4"
   },
   "files": [
     "ui_mp4frag.html",

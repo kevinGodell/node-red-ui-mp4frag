@@ -9,7 +9,7 @@ const hlsJsPath = require.resolve('hls.js/dist/hls.min.js');
 module.exports = RED => {
   const {
     httpNode,
-    settings,
+    settings: { httpNodeRoot },
     _,
     nodes: { createNode, getNode, registerType },
   } = RED;
@@ -225,7 +225,7 @@ module.exports = RED => {
 
     static renderInHead() {
       return String.raw`
-<script type="text/javascript" src="/ui_mp4frag/hls.min.js"></script>
+<script type="text/javascript" src="${httpNodeRoot}ui_mp4frag/hls.min.js"></script>
 <style>
   .nr-dashboard-ui_mp4frag {
     padding: 0;

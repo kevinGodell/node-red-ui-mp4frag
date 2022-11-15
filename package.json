@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-ui-mp4frag",
-  "version": "0.1.0-beta.5",
+  "version": "0.1.0-beta.6",
   "description": "node-red fragmented mp4 client",
   "main": "ui_mp4frag.js",
   "scripts": {

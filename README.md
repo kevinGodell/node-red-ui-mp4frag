@@ -33,6 +33,10 @@ node-red-stop && node-red-start
 * See the detailed help text in the sidebar.
 
 ### Screenshots:
+<img width="500" alt="flow" src="https://user-images.githubusercontent.com/6091746/208336875-53907251-75e6-457d-be71-9ffb08881bf5.png">
+<img width="500" alt="settings" src="https://user-images.githubusercontent.com/6091746/208337012-bd033ed9-3d9b-4680-8d18-515ece010052.png">
+<img width="500" alt="help" src="https://user-images.githubusercontent.com/6091746/208337061-90e55917-8bb9-4f08-82e0-6bd8286e5a19.png">
+<img width="500" alt="dashboard" src="https://user-images.githubusercontent.com/6091746/208337103-d7882919-ced9-4fc5-87cf-11d7cb08debc.png">
 
 ### Flows:
 https://github.com/kevinGodell/node-red-ui-mp4frag/tree/master/examples

@@ -1,0 +1,216 @@
+[
+  {
+    "id": "7a8c3f95b486b8f9",
+    "type": "ffmpeg",
+    "z": "ed13c7b93abea81e",
+    "name": "",
+    "outputs": 3,
+    "cmdPath": "ffmpeg",
+    "cmdArgs": "[\"-loglevel\",\"+level+fatal\",\"-hide_banner\",\"-nostats\",\"-re\",\"-f\",\"lavfi\",\"-i\",\"testsrc=size=qcif:rate=5[out0];sine=f=100:b=4[out1]\",\"-f\",\"mp4\",\"-c:a\",\"aac\",\"-c:v\",\"libx264\",\"-profile:v\",\"high\",\"-level\",\"5.0\",\"-pix_fmt\",\"yuv420p\",\"-movflags\",\"+frag_keyframe+empty_moov+default_base_moof\",\"-g\",\"20\",\"-tune\",\"zerolatency\",\"-metadata\",\"title=test_source\",\"-t\",\"00:00:20\",\"pipe:1\"]",
+    "cmdOutputs": 2,
+    "killSignal": "SIGTERM",
+    "x": 320,
+    "y": 380,
+    "wires": [
+      [
+        "4cc7afbbcc802243"
+      ],
+      [
+        "4cc7afbbcc802243"
+      ],
+      [
+        "30bbbddd32d43bde"
+      ]
+    ]
+  },
+  {
+    "id": "5654e6d653ad2b72",
+    "type": "inject",
+    "z": "ed13c7b93abea81e",
+    "name": "stop",
+    "props": [
+      {
+        "p": "action",
+        "v": "{\"command\":\"stop\"}",
+        "vt": "json"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "x": 110,
+    "y": 400,
+    "wires": [
+      [
+        "7a8c3f95b486b8f9"
+      ]
+    ]
+  },
+  {
+    "id": "3db9c9f03c8f6cae",
+    "type": "inject",
+    "z": "ed13c7b93abea81e",
+    "name": "start",
+    "props": [
+      {
+        "p": "action",
+        "v": "{\"command\":\"start\"}",
+        "vt": "json"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "x": 110,
+    "y": 340,
+    "wires": [
+      [
+        "7a8c3f95b486b8f9"
+      ]
+    ]
+  },
+  {
+    "id": "30bbbddd32d43bde",
+    "type": "debug",
+    "z": "ed13c7b93abea81e",
+    "name": "stderr",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 530,
+    "y": 400,
+    "wires": []
+  },
+  {
+    "id": "4cc7afbbcc802243",
+    "type": "mp4frag",
+    "z": "ed13c7b93abea81e",
+    "name": "",
+    "outputs": 2,
+    "basePath": "ui_mp4frag_01",
+    "serveHttp": "true",
+    "serveIo": "true",
+    "hlsPlaylistSize": "6",
+    "hlsPlaylistExtra": "2",
+    "autoStart": "false",
+    "preBuffer": 1,
+    "timeLimit": 10000,
+    "repeated": "false",
+    "statusData": "playlist",
+    "x": 590,
+    "y": 340,
+    "wires": [
+      [
+        "652bde80360a1fe1"
+      ],
+      []
+    ]
+  },
+  {
+    "id": "deaad4e4af7c0a2d",
+    "type": "comment",
+    "z": "ed13c7b93abea81e",
+    "name": "FFMPEG IS NOT INCLUDED WITH THIS NODE. IT MUST BE INSTALLED SEPARATELY.",
+    "info": "",
+    "x": 340,
+    "y": 60,
+    "wires": []
+  },
+  {
+    "id": "31817c6036caea68",
+    "type": "comment",
+    "z": "ed13c7b93abea81e",
+    "name": "Create sample mp4 video and play it using ui_mp4frag.",
+    "info": "",
+    "x": 240,
+    "y": 280,
+    "wires": []
+  },
+  {
+    "id": "dff2ea4e8e77635b",
+    "type": "comment",
+    "z": "ed13c7b93abea81e",
+    "name": "ENOENT error indicates that ffmpeg is not installed or its path is incorrect.",
+    "info": "",
+    "x": 300,
+    "y": 140,
+    "wires": []
+  },
+  {
+    "id": "44d0d8918db56d4d",
+    "type": "comment",
+    "z": "ed13c7b93abea81e",
+    "name": "The correct movflags must be used when generating compatible mp4 video.",
+    "info": "",
+    "x": 310,
+    "y": 100,
+    "wires": []
+  },
+  {
+    "id": "182a05833d08c4a5",
+    "type": "comment",
+    "z": "ed13c7b93abea81e",
+    "name": "For help, publicly tag me in the Node-RED forum @kevinGodell.",
+    "info": "`@kevinGodell`",
+    "x": 270,
+    "y": 180,
+    "wires": []
+  },
+  {
+    "id": "652bde80360a1fe1",
+    "type": "ui_mp4frag",
+    "z": "ed13c7b93abea81e",
+    "name": "",
+    "group": "46d6d60673638810",
+    "order": 0,
+    "width": "20",
+    "height": "14",
+    "readyPoster": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB2aWV3Qm94PSIwIDAgODAwMCA2MDAwIj48dGV4dCBmaWxsPSIjMGYwIiBzdHJva2Utd2lkdGg9IjAiIGR4PSIwIiBkeT0iMCIgZm9udC1mYW1pbHk9IiZxdW90O2UyY3B1d3p4YldsMTo6OlJvYm90byZxdW90OyIgZm9udC1zaXplPSI2MDAiIGZvbnQtd2VpZ2h0PSI3MDAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKCAxMDExLjI0IDMyMDQuODgpIj48dHNwYW4geT0iMCIgc3Ryb2tlLXdpZHRoPSIwIiBmb250LXdlaWdodD0iNzAwIj48IVtDREFUQVsKVmlkZW8gUGxheWJhY2sgUmVhZHkKXV0+PC90c3Bhbj48L3RleHQ+PC9zdmc+Cg==",
+    "errorPoster": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiB2aWV3Qm94PSIwIDAgODAwMCA2MDAwIj48dGV4dCBmaWxsPSJyZWQiIHN0cm9rZS13aWR0aD0iMCIgZHg9IjAiIGR5PSIwIiBmb250LWZhbWlseT0iJnF1b3Q7ZW42OXdhSUtnN0MxOjo6Um9ib3RvJnF1b3Q7IiBmb250LXNpemU9IjYwMCIgZm9udC13ZWlnaHQ9IjcwMCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoIDExODMuOTYgMzIwNC44OCkiPjx0c3BhbiB5PSIwIiBzdHJva2Utd2lkdGg9IjAiIGZvbnQtd2VpZ2h0PSI3MDAiPjwhW0NEQVRBWwpWaWRlbyBQbGF5YmFjayBFcnJvcgpdXT48L3RzcGFuPjwvdGV4dD48L3N2Zz4K",
+    "hlsJsConfig": "{\"liveDurationInfinity\":true,\"liveBackBufferLength\":5,\"maxBufferLength\":10,\"manifestLoadingTimeOut\":1000,\"manifestLoadingMaxRetry\":10,\"manifestLoadingRetryDelay\":500}",
+    "autoplay": "true",
+    "unload": "true",
+    "threshold": 0.1,
+    "controls": "true",
+    "muted": "true",
+    "players": [
+      "socket.io",
+      "hls.js",
+      "hls",
+      "mp4"
+    ],
+    "x": 870,
+    "y": 340,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "46d6d60673638810",
+    "type": "ui_group",
+    "name": "ui_mp4frag_01",
+    "tab": "9eb9a9fcd56859ba",
+    "order": 1,
+    "disp": true,
+    "width": "20",
+    "collapse": false,
+    "className": ""
+  },
+  {
+    "id": "9eb9a9fcd56859ba",
+    "type": "ui_tab",
+    "name": "ui_mp4frag",
+    "icon": "dashboard",
+    "disabled": false,
+    "hidden": false
+  }
+]

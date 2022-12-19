@@ -1,7 +1,8 @@
 <script data-help-name="ui_mp4frag" type="text/html">
-  <p>Play fragmented mp4 video on supported browsers.</p>
+  <p>Play fragmented mp4 video in the node-red-dashboard.</p>
   <ul>
-    <li>ui video player loads after receiving a payload with compatible video sources</li>
+    <li>video player loads after receiving a payload with compatible video sources</li>
+    <li>only modern browsers are supported</li>
   </ul>
 
   <h3>Inputs</h3>
@@ -40,7 +41,7 @@
       <h4>Socket.io</h4>
       <ul>
         <li>socket.io connection details</li>
-        <li>currently only works with <a href="https://github.com/kevinGodell/node-red-contrib-mp4frag">node-red-contrib-mp4frag</a></li>
+        <li>currently only works with <a href="https://github.com/kevinGodell/node-red-mp4frag">@kevingodell/node-red-mp4frag</a></li>
         <li>
           send an input <code>msg</code> structured as:
           <pre class="form-tips" style="min-width: 450px"><code>

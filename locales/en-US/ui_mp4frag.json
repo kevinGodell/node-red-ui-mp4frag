@@ -9,9 +9,7 @@
       "unloaded": "unloaded"
     },
     "success": {},
-    "warning": {
-      "hls_js_url": "Add property <strong>uiMp4frag.hlsJsUrl</strong> to <em>settings.js</em><hr/><code class=\"form-tips\">uiMp4frag.hlsJsUrl: 'url_to_lib_hls.js'</code>"
-    },
+    "warning": {},
     "error": {
       "invalid_ui_group": "invalid ui group",
       "invalid_hls_js_config": "invalid HLS.js config",

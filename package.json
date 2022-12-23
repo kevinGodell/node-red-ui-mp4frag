@@ -1,6 +1,6 @@
 {
   "name": "@kevingodell/node-red-ui-mp4frag",
-  "version": "0.1.1-beta.0",
+  "version": "0.1.1-beta.1",
   "description": "Play fragmented mp4 video in the node-red-dashboard.",
   "main": "ui_mp4frag.js",
   "scripts": {

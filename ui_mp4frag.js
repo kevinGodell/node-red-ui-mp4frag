@@ -37,13 +37,13 @@ module.exports = RED => {
 
         this.readyPoster = config.readyPoster;
 
-        this.autoplay = config.autoplay !== false && config.autoplay !== 'false'; // default to true if no value
+        this.autoplay = config.autoplay !== 'false'; // default to true if no value
 
-        this.controls = config.controls !== false && config.controls !== 'false'; // default to true if no value
+        this.controls = config.controls !== 'false'; // default to true if no value
 
-        this.muted = config.muted !== false && config.muted !== 'false'; // default to true if no value
+        this.muted = config.muted !== 'false'; // default to true if no value
 
-        this.unload = config.unload !== false && config.unload !== 'false'; // default to true if no value
+        this.unload = config.unload !== 'false'; // default to true if no value
 
         this.threshold = (f => (f >= 0 ? f : 0.1))(Number.parseFloat(config.threshold));
 
@@ -90,13 +90,9 @@ module.exports = RED => {
     createVideoOptions() {
       const videoOptions = ['preload="metadata"', 'playsinline'];
 
-      if (this.controls) {
-        videoOptions.push('controls');
-      }
+      this.controls && videoOptions.push('controls');
 
-      if (this.muted) {
-        videoOptions.push('muted');
-      }
+      this.muted && videoOptions.push('muted');
 
       return videoOptions.join(' ');
     }
@@ -202,8 +198,6 @@ module.exports = RED => {
     }
 
     onClose(removed, done) {
-      // this.send({ payload: 'good bye'});
-
       this.removeListener('close', this.onClose);
 
       --UiMp4fragNode.nodeCount;
@@ -267,7 +261,7 @@ module.exports = RED => {
     }
 
     static validateHlsJsConfig(hlsJsConfig) {
-      if (typeof hlsJsConfig !== 'object' || hlsJsConfig === null) {
+      if (!(hlsJsConfig instanceof Object && Object.getPrototypeOf(hlsJsConfig) === Object.prototype)) {
         throw new Error(_('ui_mp4frag.error.invalid_hls_js_config'));
       }
     }

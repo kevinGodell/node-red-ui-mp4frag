@@ -16,6 +16,7 @@
     "url": "git+https://github.com/kevinGodell/node-red-ui-mp4frag.git"
   },
   "keywords": [
+    "node-red",
     "node-red-dashboard",
     "mp4",
     "fragmented",

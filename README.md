@@ -3,8 +3,8 @@
 ######
 [![Buy me a coffee](https://img.shields.io/badge/-buy%20me%20a%20coffee-red?logo=buy%20me%20a%20coffee)](https://buymeacoffee.com/kevinGodell)
 [![GitHub license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://raw.githubusercontent.com/kevinGodell/node-red-ui-mp4frag/master/LICENSE)
-[![npm](https://img.shields.io/npm/dt/@kevingodell/node-red-ui-mp4frag.svg?style=flat-square)](https://www.npmjs.com/package/@kevingodell/node-red-ui-mp4frag)
 [![GitHub issues](https://img.shields.io/github/issues/kevinGodell/node-red-ui-mp4frag.svg)](https://github.com/kevinGodell/node-red-ui-mp4frag/issues)
+<!--[![npm](https://img.shields.io/npm/dt/@kevingodell/node-red-ui-mp4frag.svg?style=flat-square)](https://www.npmjs.com/package/@kevingodell/node-red-ui-mp4frag)-->
 
 **A [Node-RED](https://nodered.org/) node used for playing fragmented mp4 video in the [node-red-dashboard](https://github.com/node-red/node-red-dashboard).**
 
@@ -21,9 +21,9 @@
 ```
 cd ~/.node-red
 ```
-* using npm
+* using npm to install package directly from GitHub
 ```
-npm install @kevingodell/node-red-ui-mp4frag
+npm install kevingodell/node-red-ui-mp4frag
 ```
 * reboot the node-red server
 ```
